@@ -1,4 +1,3 @@
-
 namespace DripChipDbSystem
 {
     public class Program
