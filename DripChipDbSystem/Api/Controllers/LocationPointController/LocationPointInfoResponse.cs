@@ -1,4 +1,4 @@
-﻿namespace DripChipDbSystem.Api.Controllers.LocationPointController
+namespace DripChipDbSystem.Api.Controllers.LocationPointController
 {
     /// <summary>
     /// Информации о точке локации животных
@@ -13,11 +13,11 @@
         /// <summary>
         /// Географическая широта в градусах
         /// </summary>
-        public string Latityde { get; set; }
+        public double Latitude { get; set; }
 
         /// <summary>
         ///  Географическая долгота в градусах
         /// </summary>
-        public string Longitudede { get; set;}
+        public double Longitude { get; set; }
     }
 }
