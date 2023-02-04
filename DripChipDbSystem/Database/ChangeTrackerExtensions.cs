@@ -1,9 +1,9 @@
-﻿using DripChipDbSystem.Database.Enums;
-using DripChipDbSystem.Database.Models.Animals;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Linq;
+using DripChipDbSystem.Database.Enums;
+using DripChipDbSystem.Database.Models.Animals;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace DripChipDbSystem.Database
 {
@@ -19,12 +19,12 @@ namespace DripChipDbSystem.Database
                 }
             }
 
-            foreach (var item in changeTracker.Entries<Animal>().Where(e => e.State == EntityState.Added))
+            if (changeTracker
+                .Entries<Animal>()
+                .Where(e => e.State == EntityState.Added)
+                .Any(item => item.Entity.LifeStatus == LifeStatus.Dead))
             {
-                if (item.Entity.LifeStatus == LifeStatus.Dead)
-                {
-                    throw new Exception("Нельзя добавить мертвое животное");
-                }
+                throw new Exception("Нельзя добавить мертвое животное");
             }
         }
     }

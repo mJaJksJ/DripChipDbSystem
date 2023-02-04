@@ -2,10 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Startup.Configuration;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
 
 namespace Startup.Startup
 {
@@ -29,16 +28,14 @@ namespace Startup.Startup
         public static void UseDatabase<TContext>(this IHost app)
             where TContext : DbContext
         {
-            using (var scope = app.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<TContext>();
-                context.Database.Migrate();
+            using var scope = app.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<TContext>();
+            context.Database.Migrate();
 
-                var npgSqlConnection = context.Database.GetDbConnection() as NpgsqlConnection;
-                npgSqlConnection?.Open();
-                npgSqlConnection?.ReloadTypes();
-                npgSqlConnection?.Close();
-            }
+            var npgSqlConnection = context.Database.GetDbConnection() as NpgsqlConnection;
+            npgSqlConnection?.Open();
+            npgSqlConnection?.ReloadTypes();
+            npgSqlConnection?.Close();
         }
 
         private static string GetConnectionString(IConfiguration configuration)

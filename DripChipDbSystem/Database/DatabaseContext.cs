@@ -1,12 +1,9 @@
+using System;
 using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Database.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Npgsql;
 using Npgsql.NameTranslation;
-using System;
-using System.Linq;
-using System.Reflection.Emit;
 
 namespace DripChipDbSystem.Database
 {

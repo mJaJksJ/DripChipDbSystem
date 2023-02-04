@@ -1,4 +1,4 @@
-﻿namespace Startup.Configuration
+namespace Startup.Configuration
 {
     /// <summary>
     /// Конфигурации базы данных
