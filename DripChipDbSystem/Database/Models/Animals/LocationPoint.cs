@@ -26,8 +26,8 @@ namespace DripChipDbSystem.Database.Models.Animals
         public void Configure(EntityTypeBuilder<LocationPoint> builder)
         {
             builder.ToTable("location_point");
-            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(Latitude)}", $"[{nameof(Latitude)}] >= -90 AND [{nameof(Latitude)}] <= 90]"));
-            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(Longitude)}", $"[{nameof(Latitude)}] >= -180 AND [{nameof(Latitude)}] <= 180]"));
+            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(Latitude)}", $"{nameof(Latitude)} >= -90 AND {nameof(Latitude)} <= 90"));
+            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(Longitude)}", $"{nameof(Latitude)} >= -180 AND {nameof(Latitude)} <= 180"));
             builder.HasKey(x => x.Id);
         }
     }

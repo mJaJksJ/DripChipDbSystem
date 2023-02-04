@@ -36,11 +36,11 @@ namespace DripChipDbSystem.Database.Models.Auth
         public void Configure(EntityTypeBuilder<Account> builder)
         {
             builder.ToTable("account");
-            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(FirstName)}", $"[{nameof(FirstName)}] NOT NULL]"));
-            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(LastName)}", $"[{nameof(LastName)}] NOT NULL]"));
-            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(Email)}", $"[{nameof(Email)}] NOT NULL]"));
-            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(PasswordHash)}", $"[{nameof(PasswordHash)}] NOT NULL]"));
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.FirstName).IsRequired();
+            builder.Property(x => x.LastName).IsRequired();
+            builder.Property(x => x.Email).IsRequired();
+            builder.Property(x => x.PasswordHash).IsRequired();
         }
     }
 }

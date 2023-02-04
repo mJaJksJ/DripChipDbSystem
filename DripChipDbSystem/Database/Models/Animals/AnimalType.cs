@@ -21,7 +21,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         public void Configure(EntityTypeBuilder<AnimalType> builder)
         {
             builder.ToTable("animal_type");
-            builder.ToTable(x => x.HasCheckConstraint($"CK_{nameof(Type)}", $"[{nameof(Type)}] NOT NULL]"));
+            builder.Property(x => x.Type).IsRequired();
             builder.HasKey(x => x.Id);
         }
     }
