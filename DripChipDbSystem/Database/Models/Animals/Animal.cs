@@ -1,14 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using DripChipDbSystem.Database.Enums;
 using DripChipDbSystem.Database.Models.Auth;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DripChipDbSystem.Database.Models.Animals
 {
     /// <summary>
     /// Животное
     /// </summary>
-    public class Animal
+    public class Animal : IEntityTypeConfiguration<Animal>
     {
         /// <summary>
         /// Id
@@ -64,7 +66,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// <summary>
         /// Id <see cref="ChippingLocationPoint"/>
         /// </summary>
-        public long ChippingLocationId { get; set; }
+        public long ChippingLocationPointId { get; set; }
 
         /// <summary>
         /// Посещенные точки локации
@@ -74,6 +76,22 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// <summary>
         /// Дата и время смерти
         /// </summary>
-        public DateTime? DeathDateTime { get; set; }
+        public DateTime? DeathDateTime { get; }
+
+        public void Configure(EntityTypeBuilder<Animal> builder)
+        {
+            builder.ToTable("animal");
+            builder.HasKey(x => x.Id);
+            builder.HasOne(x => x.Chipper);
+            builder.HasOne(x => x.ChippingLocationPoint);
+            builder.HasMany(x => x.VisitedLocations)
+                .WithOne(x => x.Animal)
+                .HasForeignKey(x => x.AnimalId);
+            builder.Property(x => x.LifeStatus)
+                .HasDefaultValue(LifeStatus.Alive);
+            builder.Property(x => x.DeathDateTime)
+                .HasDefaultValue(null);
+
+        }
     }
 }
