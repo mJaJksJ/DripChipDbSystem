@@ -1,4 +1,5 @@
 using DripChipDbSystem.Database;
+using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +20,9 @@ namespace DripChipDbSystem
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AdddDatabaseService<DatabaseContext>(builder.Configuration);
+
+            builder.Services.AddScoped<AuthService>();
+
             var app = builder.Build();
             app.UseDatabase<DatabaseContext>();
             // Configure the HTTP request pipeline.

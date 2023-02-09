@@ -1,0 +1,47 @@
+using System.Threading.Tasks;
+using DripChipDbSystem.Api.Controllers.AuthControllers;
+using DripChipDbSystem.Database;
+using DripChipDbSystem.Database.Models.Auth;
+using Microsoft.EntityFrameworkCore;
+
+namespace DripChipDbSystem.Services
+{
+    public class AuthService
+    {
+        private readonly DatabaseContext _databaseContext;
+
+        public AuthService(DatabaseContext databaseContext)
+        {
+            _databaseContext = databaseContext;
+        }
+
+        public async Task<bool> IsAccountExistsAsync(string email)
+        {
+            return await _databaseContext.Accounts
+                .AsNoTracking()
+                .AnyAsync(x => x.Email == email);
+        }
+
+        public async Task<AuthResponsetContract> AddAccountAsync(AuthRequestContract contract)
+        {
+            var newAccount = new Account
+            {
+                FirstName = contract.FirstName,
+                LastName = contract.LastName,
+                Email = contract.Email,
+                PasswordHash = contract.Password
+            };
+
+            await _databaseContext.AddAsync(newAccount);
+            await _databaseContext.SaveChangesAsync();
+
+            return new AuthResponsetContract
+            {
+                Id = newAccount.Id,
+                FirstName = newAccount.FirstName,
+                LastName = newAccount.LastName,
+                Email = newAccount.Email,
+            };
+        }
+    }
+}
