@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,20 +22,20 @@ namespace DripChipDbSystem.Api.Controllers.AuthController
         /// Регистрация нового аккаунта
         /// </summary>
         [HttpPost("/registration")]
-        [ProducesResponseType(typeof(AuthResponsetContract), 201)]
-        [ProducesResponseType(typeof(AuthResponsetContract), 400)]
-        [ProducesResponseType(typeof(AuthResponsetContract), 403)]
-        [ProducesResponseType(typeof(AuthResponsetContract), 409)]
+        [ProducesResponseType(typeof(AccountResponseContract), 201)]
+        [ProducesResponseType(typeof(AccountResponseContract), 400)]
+        [ProducesResponseType(typeof(AccountResponseContract), 403)]
+        [ProducesResponseType(typeof(AccountResponseContract), 409)]
         public async Task<IActionResult> RegistrationAsync(AuthRequestContract requestContract)
         {
             if ( /*уже авторизирован*/false)
             {
-                return new ObjectResult(new AuthResponsetContract()) { StatusCode = StatusCodes.Status403Forbidden };
+                return new ObjectResult(new AccountResponseContract()) { StatusCode = StatusCodes.Status403Forbidden };
             }
 
             if (await _authService.IsAccountExistsAsync(requestContract.Email))
             {
-                return Conflict(new AuthResponsetContract());
+                return Conflict(new AccountResponseContract());
             }
 
             var response = await _authService.AddAccountAsync(requestContract);

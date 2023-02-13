@@ -23,6 +23,7 @@ namespace DripChipDbSystem
             builder.Services.AdddDatabaseService<DatabaseContext>(builder.Configuration);
 
             builder.Services.AddScoped<AuthService>();
+            builder.Services.AddScoped<AccountService>();
 
             var app = builder.Build();
             app.UseDatabase<DatabaseContext>();

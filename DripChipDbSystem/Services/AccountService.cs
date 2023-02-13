@@ -1,8 +1,10 @@
 using System.Linq;
 using System.Threading.Tasks;
+using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Auth;
 using DripChipDbSystem.Exceptions;
+using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 using Microsoft.EntityFrameworkCore;
 
 namespace DripChipDbSystem.Services
@@ -24,7 +26,7 @@ namespace DripChipDbSystem.Services
 
             if (account is null)
             {
-                throw new NotFound404Exception();
+                throw new NotFound404Exception(){ Data = { { HttpResponseMiddleware.ResultKey, new AccountResponseContract() } } };
             }
 
             return account;

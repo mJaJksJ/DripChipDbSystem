@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Api.Controllers.AuthController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Auth;
@@ -22,7 +23,7 @@ namespace DripChipDbSystem.Services
                 .AnyAsync(x => x.Email == email);
         }
 
-        public async Task<AuthResponsetContract> AddAccountAsync(AuthRequestContract contract)
+        public async Task<AccountResponseContract> AddAccountAsync(AuthRequestContract contract)
         {
             var newAccount = new Account
             {
@@ -35,7 +36,7 @@ namespace DripChipDbSystem.Services
             await _databaseContext.AddAsync(newAccount);
             await _databaseContext.SaveChangesAsync();
 
-            return new AuthResponsetContract
+            return new AccountResponseContract
             {
                 Id = newAccount.Id,
                 FirstName = newAccount.FirstName,

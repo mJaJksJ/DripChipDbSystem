@@ -19,7 +19,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         /// <summary>
         /// Получение информации об аккаунте пользователя
         /// </summary>
-        [HttpGet("/accounts/{accountId} ")]
+        [HttpGet("/accounts/{accountId}")]
         [ProducesResponseType(typeof(AccountResponseContract), 200)]
         [ProducesResponseType(typeof(AccountResponseContract), 400)]
         [ProducesResponseType(typeof(AccountResponseContract), 401)]
