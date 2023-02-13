@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 
-namespace DripChipDbSystem.Api.Controllers.AuthControllers
+namespace DripChipDbSystem.Api.Controllers.AuthController
 {
     [AttributeUsage(AttributeTargets.Class)]
     public partial class AuthRequestValidationAttribute : ValidationAttribute

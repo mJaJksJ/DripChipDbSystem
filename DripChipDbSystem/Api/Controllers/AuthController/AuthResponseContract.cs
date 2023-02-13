@@ -1,11 +1,15 @@
-namespace DripChipDbSystem.Api.Controllers.AuthControllers
+namespace DripChipDbSystem.Api.Controllers.AuthController
 {
     /// <summary>
     /// Контракт запроса при авторизации
     /// </summary>
-    [AuthRequestValidation(typeof(AuthRequestContract))]
-    public class AuthRequestContract
+    public class AuthResponsetContract
     {
+        /// <summary>
+        /// Идентификатор аккаунта пользователя
+        /// </summary>
+        public int Id { get; set; }
+
         /// <summary>
         /// Имя пользователя
         /// </summary>
@@ -20,10 +24,5 @@ namespace DripChipDbSystem.Api.Controllers.AuthControllers
         /// Адрес электронной почты
         /// </summary>
         public string Email { get; set; }
-
-        /// <summary>
-        /// Пароль от аккаунта пользователя
-        /// </summary>
-        public string Password { get; set; }
     }
 }

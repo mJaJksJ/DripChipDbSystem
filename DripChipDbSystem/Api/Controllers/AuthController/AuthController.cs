@@ -3,7 +3,7 @@ using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DripChipDbSystem.Api.Controllers.AuthControllers
+namespace DripChipDbSystem.Api.Controllers.AuthController
 {
     /// <summary>
     /// Аутентификация пользователя

@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using DripChipDbSystem.Api.Controllers.AuthControllers;
+using DripChipDbSystem.Api.Controllers.AuthController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Auth;
 using Microsoft.EntityFrameworkCore;
