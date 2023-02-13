@@ -21,8 +21,4 @@
     <ProjectReference Include="..\Startup\Startup.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Api\Controllers\AccountController\" />
-  </ItemGroup>
-
 </Project>

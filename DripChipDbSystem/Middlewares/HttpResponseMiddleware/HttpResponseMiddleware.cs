@@ -25,6 +25,11 @@ namespace DripChipDbSystem.Middlewares.HttpResponseMiddleware
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsJsonAsync(ex400.Data[ResultKey]);
             }
+            catch (NotFound404Exception ex404)
+            {
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                await context.Response.WriteAsJsonAsync(ex404.Data[ResultKey]);
+            }
         }
     }
 }
