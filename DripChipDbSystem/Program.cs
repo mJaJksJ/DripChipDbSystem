@@ -1,4 +1,5 @@
 using DripChipDbSystem.Database;
+using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,7 @@ namespace DripChipDbSystem
 
             app.UseAuthorization();
 
+            app.UseHttpResponseMiddleware();
 
             app.MapControllers();
 

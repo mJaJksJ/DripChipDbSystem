@@ -3,7 +3,7 @@ namespace DripChipDbSystem.Api.Controllers.AuthControllers
     /// <summary>
     /// Контракт запроса при авторизации
     /// </summary>
-    [AuthRequestValidation]
+    [AuthRequestValidation(typeof(AuthRequestContract))]
     public class AuthRequestContract
     {
         /// <summary>

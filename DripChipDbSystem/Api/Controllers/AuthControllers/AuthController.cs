@@ -27,11 +27,6 @@ namespace DripChipDbSystem.Api.Controllers.AuthControllers
         [ProducesResponseType(typeof(AuthResponsetContract), 409)]
         public async Task<IActionResult> RegistrationAsync(AuthRequestContract requestContract)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new AuthResponsetContract());
-            }
-
             if ( /*уже авторизирован*/false)
             {
                 return new ObjectResult(new AuthResponsetContract()) { StatusCode = StatusCodes.Status403Forbidden };

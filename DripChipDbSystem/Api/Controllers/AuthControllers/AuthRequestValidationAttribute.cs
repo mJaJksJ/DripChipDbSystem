@@ -1,12 +1,21 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using DripChipDbSystem.Exceptions;
+using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 
 namespace DripChipDbSystem.Api.Controllers.AuthControllers
 {
     [AttributeUsage(AttributeTargets.Class)]
     public partial class AuthRequestValidationAttribute : ValidationAttribute
     {
+        private readonly object _defaultValue;
+
+        public AuthRequestValidationAttribute(Type type)
+        {
+            _defaultValue = Activator.CreateInstance(type);
+        }
+
         [GeneratedRegex(@"^\s*$")]
         private static partial Regex OnlySpaceSymbols();
 
@@ -17,30 +26,45 @@ namespace DripChipDbSystem.Api.Controllers.AuthControllers
         {
             if (value is not AuthRequestContract contract)
             {
-                throw new Exception();
+                throw new Exception()
+                {
+                    Data = { { HttpResponseMiddleware.ResultKey, _defaultValue  } }
+                };
             }
 
             if (string.IsNullOrEmpty(contract.FirstName) ||
                 OnlySpaceSymbols().IsMatch(contract.FirstName))
             {
-                return false;
+                throw new BadRequest400Exception()
+                {
+                    Data = { { HttpResponseMiddleware.ResultKey, _defaultValue } }
+                };
             }
 
             if (string.IsNullOrEmpty(contract.LastName) ||
                 OnlySpaceSymbols().IsMatch(contract.LastName))
             {
-                return false;
+                throw new BadRequest400Exception()
+                {
+                    Data = { { HttpResponseMiddleware.ResultKey, _defaultValue } }
+                };
             }
 
             if (OnlySpaceSymbols().IsMatch(contract.Email) || Email().IsMatch(contract.Email))
             {
-                return false;
+                throw new BadRequest400Exception()
+                {
+                    Data = { { HttpResponseMiddleware.ResultKey, _defaultValue } }
+                };
             }
 
             if (string.IsNullOrEmpty(contract.Password) ||
                 OnlySpaceSymbols().IsMatch(contract.Password))
             {
-                return false;
+                throw new BadRequest400Exception()
+                {
+                    Data = { { HttpResponseMiddleware.ResultKey, _defaultValue } }
+                };
             }
 
             return true;
