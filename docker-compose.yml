@@ -1,0 +1,32 @@
+version: '2.15.1'
+services:
+  database:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=animal-chipization
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+  webapi:
+    image: mjajksj/webapi
+    ports:
+      - "8080:80"
+    depends_on:
+      - database
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/animal-chipization
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+  tests:
+    image: mrexpen/planet_olymp_phase1
+    pull_policy: always
+    ports:
+      - "8090:8080"
+    depends_on:
+      - webapi
+    environment:
+      SERVER_URL: https://localhost:8080
+      STAGE: 0
