@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +42,11 @@ namespace Startup.Startup
         {
             var config = configuration.GetSection(DatabaseConfig.ConfigName).Get<DatabaseConfig>();
             var sb = new StringBuilder("");
-            sb.Append($"Server={config.Server};");
+            if (!string.IsNullOrEmpty(config.Host))
+            {
+                sb.Append($"Host={config.Host};");
+            }
+            //sb.Append($"Server={config.Server};");
             sb.Append($"Port={config.Port};");
             sb.Append($"Database={config.DatabaseName};");
             sb.Append($"User Id={config.User};");

@@ -4,6 +4,7 @@ using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Startup.Startup;
 
 namespace DripChipDbSystem
@@ -20,6 +21,7 @@ namespace DripChipDbSystem
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
             builder.Services.AdddDatabaseService<DatabaseContext>(builder.Configuration);
 
             builder.Services.AddScoped<AuthService>();
