@@ -8,10 +8,6 @@ namespace Startup.Configuration
         public static string ConfigName => "Database";
 
         /// <summary>
-        /// Хост расположения бд
-        /// </summary>
-        public string Host { get; set; }
-        /// <summary>
         /// Сервер расположения бд
         /// </summary>
         public string Server { get; set; }

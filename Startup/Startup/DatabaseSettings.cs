@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,8 @@ namespace Startup.Startup
                 .AddDbContext<TContext>(
                     options =>
                     {
-                        options.UseNpgsql(GetConnectionString(configuration), x => x.MigrationsAssembly("DripChipDbSystem"));
+                        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")?.Replace("\"", "") ?? GetConnectionString(configuration);
+                        options.UseNpgsql(connectionString, x => x.MigrationsAssembly("DripChipDbSystem"));
                         options.EnableSensitiveDataLogging();
                     });
         }
@@ -42,11 +44,7 @@ namespace Startup.Startup
         {
             var config = configuration.GetSection(DatabaseConfig.ConfigName).Get<DatabaseConfig>();
             var sb = new StringBuilder("");
-            if (!string.IsNullOrEmpty(config.Host))
-            {
-                sb.Append($"Host={config.Host};");
-            }
-            //sb.Append($"Server={config.Server};");
+            sb.Append($"Server={config.Server};");
             sb.Append($"Port={config.Port};");
             sb.Append($"Database={config.DatabaseName};");
             sb.Append($"User Id={config.User};");
