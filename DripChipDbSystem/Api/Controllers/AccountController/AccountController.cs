@@ -1,3 +1,4 @@
+using DripChipDbSystem.Api.Controllers.Common.Attributes;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -59,7 +60,9 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [ProducesResponseType(typeof(AccountResponseContract), 401)]
         [ProducesResponseType(typeof(AccountResponseContract), 403)]
         [ProducesResponseType(typeof(AccountResponseContract), 409)]
-        public async Task<IActionResult> UpdateAccountAsync(int accountId, AccountRequestContract request)
+        public async Task<IActionResult> UpdateAccountAsync(
+            [AccountId(typeof(AccountResponseContract))] int accountId,
+            AccountRequestContract request)
         {
             var response = await _accountService.UpdateAccountAsync(accountId, request);
             return Ok(response);
@@ -73,7 +76,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 403)]
-        public async Task<IActionResult> DeleteAccountAsync(int accountId)
+        public async Task<IActionResult> DeleteAccountAsync([AccountId(typeof(AccountResponseContract))] int accountId)
         {
             await _accountService.DeleteAccountAsync(accountId);
             return Ok();

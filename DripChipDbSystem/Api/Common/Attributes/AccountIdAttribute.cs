@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System;
 using DripChipDbSystem.Exceptions;
 
-namespace DripChipDbSystem.Api.Controllers.AccountController
+namespace DripChipDbSystem.Api.Controllers.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter)]
     public class AccountIdAttribute : ValidationAttribute
