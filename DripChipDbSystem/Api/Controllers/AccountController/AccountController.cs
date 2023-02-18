@@ -64,5 +64,19 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
             var response = await _accountService.UpdateAccountAsync(accountId, request);
             return Ok(response);
         }
+
+        /// <summary>
+        /// Удаление аккаунта пользователя
+        /// </summary>
+        [HttpDelete("/accounts/{accountId}")]
+        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(void), 400)]
+        [ProducesResponseType(typeof(void), 401)]
+        [ProducesResponseType(typeof(void), 403)]
+        public async Task<IActionResult> DeleteAccountAsync(int accountId)
+        {
+            await _accountService.DeleteAccountAsync(accountId);
+            return Ok();
+        }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Database;
@@ -65,8 +66,8 @@ namespace DripChipDbSystem.Services
         public async Task<AccountResponseContract> UpdateAccountAsync(int accountId,
             AccountRequestContract request)
         {
-            var account = _databaseContext.Accounts
-                .SingleOrDefault(x => x.Id == accountId);
+            var account = await _databaseContext.Accounts
+                .SingleOrDefaultAsync(x => x.Id == accountId);
 
             account.FirstName = request.FirstName;
             account.LastName = request.LastName;
@@ -81,6 +82,14 @@ namespace DripChipDbSystem.Services
                 LastName = account.LastName,
                 Email = account.Email
             };
+        }
+
+        public async Task DeleteAccountAsync(int accountId)
+        {
+            var account = await _databaseContext.Accounts
+                .SingleOrDefaultAsync(x => x.Id == accountId);
+            _databaseContext.Remove(account);
+            await _databaseContext.SaveChangesAsync();
         }
 
         private static Expression<Func<Account, bool>> Filter(Func<Account, string> field, string filterString)
