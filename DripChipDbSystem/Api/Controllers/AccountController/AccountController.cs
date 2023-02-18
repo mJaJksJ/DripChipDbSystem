@@ -1,5 +1,6 @@
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DripChipDbSystem.Api.Controllers.AccountController
@@ -27,6 +28,25 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         public async Task<IActionResult> RegistrationAsync([AccountId(typeof(AccountResponseContract))] int accountId)
         {
             var response = await _accountService.GetAccountAsync(accountId);
+            return Ok(response);
+        }
+        
+        /// <summary>
+        /// Поиск аккаунтов пользователей по параметрам
+        /// </summary>
+        [HttpGet("/accounts/search")]
+        [ProducesResponseType(typeof(IEnumerable<AccountResponseContract>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<AccountResponseContract>), 400)]
+        [ProducesResponseType(typeof(IEnumerable<AccountResponseContract>), 401)]
+        public async Task<IActionResult> SearchAsync(
+            [FromQuery] string firstName,
+            [FromQuery] string lastName,
+            [FromQuery] string email,
+            [FromQuery] int from,
+            [FromQuery] int size
+            )
+        {
+            var response = await _accountService.SearchAsync(firstName, lastName, email, from, size);
             return Ok(response);
         }
     }
