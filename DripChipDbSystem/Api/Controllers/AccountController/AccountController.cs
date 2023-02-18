@@ -25,7 +25,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [ProducesResponseType(typeof(AccountResponseContract), 400)]
         [ProducesResponseType(typeof(AccountResponseContract), 401)]
         [ProducesResponseType(typeof(AccountResponseContract), 404)]
-        public async Task<IActionResult> RegistrationAsync([AccountId(typeof(AccountResponseContract))] int accountId)
+        public async Task<IActionResult> GetAccountAsync([AccountId(typeof(AccountResponseContract))] int accountId)
         {
             var response = await _accountService.GetAccountAsync(accountId);
             return Ok(response);
@@ -47,6 +47,21 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
             )
         {
             var response = await _accountService.SearchAsync(firstName, lastName, email, from, size);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Обновление данных аккаунта пользователя
+        /// </summary>
+        [HttpPut("/accounts/{accountId}")]
+        [ProducesResponseType(typeof(AccountResponseContract), 200)]
+        [ProducesResponseType(typeof(AccountResponseContract), 400)]
+        [ProducesResponseType(typeof(AccountResponseContract), 401)]
+        [ProducesResponseType(typeof(AccountResponseContract), 403)]
+        [ProducesResponseType(typeof(AccountResponseContract), 409)]
+        public async Task<IActionResult> UpdateAccountAsync(int accountId, AccountRequestContract request)
+        {
+            var response = await _accountService.UpdateAccountAsync(accountId, request);
             return Ok(response);
         }
     }

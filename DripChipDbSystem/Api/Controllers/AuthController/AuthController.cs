@@ -26,7 +26,7 @@ namespace DripChipDbSystem.Api.Controllers.AuthController
         [ProducesResponseType(typeof(AccountResponseContract), 400)]
         [ProducesResponseType(typeof(AccountResponseContract), 403)]
         [ProducesResponseType(typeof(AccountResponseContract), 409)]
-        public async Task<IActionResult> RegistrationAsync(AuthRequestContract requestContract)
+        public async Task<IActionResult> RegistrationAsync(AccountRequestContract requestContract)
         {
             if ( /*уже авторизирован*/false)
             {

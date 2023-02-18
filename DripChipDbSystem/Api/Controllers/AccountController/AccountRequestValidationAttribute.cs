@@ -4,14 +4,14 @@ using System.Text.RegularExpressions;
 using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 
-namespace DripChipDbSystem.Api.Controllers.AuthController
+namespace DripChipDbSystem.Api.Controllers.AccountController
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public partial class AuthRequestValidationAttribute : ValidationAttribute
+    public partial class AccountRequestValidationAttribute : ValidationAttribute
     {
         private readonly object _defaultValue;
 
-        public AuthRequestValidationAttribute(Type type)
+        public AccountRequestValidationAttribute(Type type)
         {
             _defaultValue = Activator.CreateInstance(type);
         }
@@ -24,7 +24,7 @@ namespace DripChipDbSystem.Api.Controllers.AuthController
 
         public override bool IsValid(object value)
         {
-            if (value is not AuthRequestContract contract)
+            if (value is not AccountRequestContract contract)
             {
                 throw new Exception()
                 {

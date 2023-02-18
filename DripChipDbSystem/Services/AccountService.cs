@@ -45,6 +45,7 @@ namespace DripChipDbSystem.Services
         public async Task<IEnumerable<AccountResponseContract>> SearchAsync(string firstName, string lastName, string email, int from, int size)
         {
             return await _databaseContext.Accounts
+                .AsNoTracking()
                 .Where(Filter(x => x.FirstName, firstName))
                 .Where(Filter(x => x.LastName, lastName))
                 .Where(Filter(x => x.Email, email))
@@ -59,6 +60,27 @@ namespace DripChipDbSystem.Services
                 })
                 .OrderBy(x => x.Id)
                 .ToListAsync();
+        }
+
+        public async Task<AccountResponseContract> UpdateAccountAsync(int accountId,
+            AccountRequestContract request)
+        {
+            var account = _databaseContext.Accounts
+                .SingleOrDefault(x => x.Id == accountId);
+
+            account.FirstName = request.FirstName;
+            account.LastName = request.LastName;
+            account.Email = request.Email;
+            account.PasswordHash = request.Password;
+
+            _databaseContext.SaveChanges();
+            return new AccountResponseContract
+            {
+                Id = account.Id,
+                FirstName = account.FirstName,
+                LastName = account.LastName,
+                Email = account.Email
+            };
         }
 
         private static Expression<Func<Account, bool>> Filter(Func<Account, string> field, string filterString)

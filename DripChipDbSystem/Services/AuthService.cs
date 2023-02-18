@@ -23,7 +23,7 @@ namespace DripChipDbSystem.Services
                 .AnyAsync(x => x.Email == email);
         }
 
-        public async Task<AccountResponseContract> AddAccountAsync(AuthRequestContract contract)
+        public async Task<AccountResponseContract> AddAccountAsync(AccountRequestContract contract)
         {
             var newAccount = new Account
             {
