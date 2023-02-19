@@ -1,21 +1,20 @@
-using System;
 namespace DripChipDbSystem.Api.Controllers.AccountController
 {
     [AccountRequestValidation(typeof(AccountRequestContract))]
     public class AccountRequestContract
     {
         /// <summary>
-        /// Новое имя пользователя
+        /// Иимя пользователя
         /// </summary>
         public string FirstName { get; set; }
 
         /// <summary>
-        /// Новая фамилия пользователя
+        /// Фамилия пользователя
         /// </summary>
         public string LastName { get; set; }
 
         /// <summary>
-        /// Новый адрес электронной почты
+        /// Адрес электронной почты
         /// </summary>
         public string Email { get; set; }
 

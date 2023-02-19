@@ -1,4 +1,3 @@
-using System;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using System.Threading.Tasks;
 using DripChipDbSystem.Database;
@@ -6,10 +5,7 @@ using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 using Microsoft.EntityFrameworkCore;
 using DripChipDbSystem.Api.Controllers.LocationController;
-using Microsoft.AspNetCore.Mvc;
 using DripChipDbSystem.Database.Models.Animals;
-using DripChipDbSystem.Api.Controllers.Common.Attributes;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DripChipDbSystem.Services
 {
