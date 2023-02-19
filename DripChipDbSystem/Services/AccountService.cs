@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AccountController;
+using DripChipDbSystem.Api.Controllers.LocationController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Auth;
 using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DripChipDbSystem.Services
@@ -74,7 +73,7 @@ namespace DripChipDbSystem.Services
             account.Email = request.Email;
             account.PasswordHash = request.Password;
 
-            _databaseContext.SaveChanges();
+            await _databaseContext.SaveChangesAsync();
             return new AccountResponseContract
             {
                 Id = account.Id,
@@ -90,6 +89,17 @@ namespace DripChipDbSystem.Services
                 .SingleOrDefaultAsync(x => x.Id == accountId);
             _databaseContext.Remove(account);
             await _databaseContext.SaveChangesAsync();
+        }
+
+        public async Task EnsureAccountNotExists(AccountRequestContract contract)
+        {
+            var isExists = await _databaseContext.Accounts
+                .AnyAsync(x => x.Email == contract.Email);
+
+            if (isExists)
+            {
+                throw new Conflict409Exception() { Data = { { HttpResponseMiddleware.ResultKey, new AccountResponseContract() } } };
+            }
         }
 
         private static Expression<Func<Account, bool>> Filter(Func<Account, string> field, string filterString)

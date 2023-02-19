@@ -39,7 +39,5 @@
 
   <ItemGroup>
     <Folder Include="Api\Controllers\LocationController\" />
-    <Folder Include="Api\Common\" />
-    <Folder Include="Api\Common\Attributes\" />
   </ItemGroup>
 </Project>

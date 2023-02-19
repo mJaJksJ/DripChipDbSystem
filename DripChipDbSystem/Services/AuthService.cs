@@ -16,13 +16,6 @@ namespace DripChipDbSystem.Services
             _databaseContext = databaseContext;
         }
 
-        public async Task<bool> IsAccountExistsAsync(string email)
-        {
-            return await _databaseContext.Accounts
-                .AsNoTracking()
-                .AnyAsync(x => x.Email == email);
-        }
-
         public async Task<AccountResponseContract> AddAccountAsync(AccountRequestContract contract)
         {
             var newAccount = new Account

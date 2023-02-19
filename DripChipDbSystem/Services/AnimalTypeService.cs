@@ -19,20 +19,21 @@ namespace DripChipDbSystem.Services
             _databaseContext = databaseContext;
         }
 
-        public async Task<LocationResponseContract> GetAnimalTypeAsync(long pointId)
+        public async Task<AnimalTypeResponseContract> GetAnimalTypeAsync(long typeId)
         {
-            var animalType = await _databaseContext.Accounts
+            var animalType = await _databaseContext.AnimalTypes
                 .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == pointId);
+                .SingleOrDefaultAsync(x => x.Id == typeId);
 
             if (animalType is null)
             {
-                throw new NotFound404Exception() { Data = { { HttpResponseMiddleware.ResultKey, new AccountResponseContract() } } };
+                throw new NotFound404Exception() { Data = { { HttpResponseMiddleware.ResultKey, new AnimalTypeResponseContract() } } };
             }
 
-            return new LocationResponseContract
+            return new AnimalTypeResponseContract()
             {
                 Id = animalType.Id,
+                Type = animalType.Type
             };
         }
 
@@ -73,6 +74,17 @@ namespace DripChipDbSystem.Services
 
             _databaseContext.Remove(location);
             await _databaseContext.SaveChangesAsync();
+        }
+
+        public async Task EnsureAnimalTypeNotExists(AnimalTypeRequestContract contract)
+        {
+            var isExists = await _databaseContext.AnimalTypes
+                .AnyAsync(x => x.Type == contract.Type);
+
+            if (isExists)
+            {
+                throw new Conflict409Exception() { Data = { { HttpResponseMiddleware.ResultKey, new AccountResponseContract() } } };
+            }
         }
     }
 }

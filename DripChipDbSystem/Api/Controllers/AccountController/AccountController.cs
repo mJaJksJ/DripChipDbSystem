@@ -1,8 +1,8 @@
-using DripChipDbSystem.Api.Controllers.Common.Attributes;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DripChipDbSystem.Api.Common.Attributes;
 
 namespace DripChipDbSystem.Api.Controllers.AccountController
 {
@@ -26,12 +26,12 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [ProducesResponseType(typeof(AccountResponseContract), 400)]
         [ProducesResponseType(typeof(AccountResponseContract), 401)]
         [ProducesResponseType(typeof(AccountResponseContract), 404)]
-        public async Task<IActionResult> GetAccountAsync([AccountId(typeof(AccountResponseContract))] int accountId)
+        public async Task<IActionResult> GetAccountAsync([IdValidation(typeof(AccountResponseContract))] int accountId)
         {
             var response = await _accountService.GetAccountAsync(accountId);
             return Ok(response);
         }
-        
+
         /// <summary>
         /// Поиск аккаунтов пользователей по параметрам
         /// </summary>
@@ -43,11 +43,11 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
             [FromQuery] string firstName,
             [FromQuery] string lastName,
             [FromQuery] string email,
-            [FromQuery] int from,
-            [FromQuery] int size
+            [FromQuery][FromValidation(typeof(AccountResponseContract))] int? from,
+            [FromQuery][SizeValidation(typeof(AccountResponseContract))] int? size
             )
         {
-            var response = await _accountService.SearchAsync(firstName, lastName, email, from, size);
+            var response = await _accountService.SearchAsync(firstName, lastName, email, from ?? 0, size ?? 10);
             return Ok(response);
         }
 
@@ -61,10 +61,11 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [ProducesResponseType(typeof(AccountResponseContract), 403)]
         [ProducesResponseType(typeof(AccountResponseContract), 409)]
         public async Task<IActionResult> UpdateAccountAsync(
-            [AccountId(typeof(AccountResponseContract))] int accountId,
-            AccountRequestContract request)
+            [IdValidation(typeof(AccountResponseContract))] int accountId,
+            AccountRequestContract contract)
         {
-            var response = await _accountService.UpdateAccountAsync(accountId, request);
+            await _accountService.EnsureAccountNotExists(contract);
+            var response = await _accountService.UpdateAccountAsync(accountId, contract);
             return Ok(response);
         }
 
@@ -76,7 +77,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 403)]
-        public async Task<IActionResult> DeleteAccountAsync([AccountId(typeof(AccountResponseContract))] int accountId)
+        public async Task<IActionResult> DeleteAccountAsync([IdValidation(typeof(AccountResponseContract))] int accountId)
         {
             await _accountService.DeleteAccountAsync(accountId);
             return Ok();

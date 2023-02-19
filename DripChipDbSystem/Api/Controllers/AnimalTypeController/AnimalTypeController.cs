@@ -1,6 +1,6 @@
-using DripChipDbSystem.Api.Controllers.Common.Attributes;
 using DripChipDbSystem.Services;
 using System.Threading.Tasks;
+using DripChipDbSystem.Api.Common.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
@@ -22,7 +22,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 400)]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 401)]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 404)]
-        public async Task<IActionResult> GetAnimalTypeAsync([AccountId(typeof(AnimalTypeResponseContract))] long typeId)
+        public async Task<IActionResult> GetAnimalTypeAsync([IdValidation(typeof(AnimalTypeResponseContract))] long typeId)
         {
             var response = await _animalTypeService.GetAnimalTypeAsync(typeId);
             return Ok(response);
@@ -38,6 +38,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 409)]
         public async Task<IActionResult> AddAnimalTypeAsync(AnimalTypeRequestContract contract)
         {
+            await _animalTypeService.EnsureAnimalTypeNotExists(contract);
             var response = await _animalTypeService.AddAnimalTypeAsync(contract);
             return Ok(response);
         }
@@ -51,9 +52,10 @@ namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 401)]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 404)]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 409)]
-        public async Task<IActionResult> UpdateAnimalTypeAsync([AccountId(typeof(AnimalTypeResponseContract))] long typeId, AnimalTypeRequestContract contract)
+        public async Task<IActionResult> UpdateAnimalTypeAsync([IdValidation(typeof(AnimalTypeResponseContract))] long typeId, AnimalTypeRequestContract contract)
         {
-            var response = await _animalTypeService.AddAnimalTypeAsync(contract);
+            await _animalTypeService.EnsureAnimalTypeNotExists(contract);
+            var response = await _animalTypeService.UpdateAnimalTypeAsync(typeId, contract);
             return Ok(response);
         }
 
@@ -65,7 +67,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 400)]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 401)]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 404)]
-        public async Task<IActionResult> DeleteAnimalTypeAsync([AccountId(typeof(AnimalTypeResponseContract))] long typeId)
+        public async Task<IActionResult> DeleteAnimalTypeAsync([IdValidation(typeof(AnimalTypeResponseContract))] long typeId)
         {
             await _animalTypeService.DeleteAnimalTypeAsync(typeId);
             return Ok();

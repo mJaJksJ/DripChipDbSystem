@@ -1,3 +1,4 @@
+using System;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using System.Threading.Tasks;
 using DripChipDbSystem.Database;
@@ -26,7 +27,7 @@ namespace DripChipDbSystem.Services
 
             if (location is null)
             {
-                throw new NotFound404Exception() { Data = { { HttpResponseMiddleware.ResultKey, new AccountResponseContract() } } };
+                throw new NotFound404Exception() { Data = { { HttpResponseMiddleware.ResultKey, new LocationResponseContract() } } };
             }
 
             return new LocationResponseContract
@@ -76,6 +77,17 @@ namespace DripChipDbSystem.Services
 
             _databaseContext.Remove(location);
             await _databaseContext.SaveChangesAsync();
+        }
+
+        public async Task EnsureLocationNotExists(LocationRequestContract contract)
+        {
+            var isExists = await _databaseContext.LocationPoints
+                .AnyAsync(x => x.Latitude == contract.Latitude.Value && x.Longitude == contract.Longitude.Value);
+
+            if (isExists)
+            {
+                throw new Conflict409Exception() { Data = { { HttpResponseMiddleware.ResultKey, new AccountResponseContract() } } };
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
+using DripChipDbSystem.Api.Common.Attributes;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Mvc;
-using DripChipDbSystem.Api.Controllers.Common.Attributes;
 
 namespace DripChipDbSystem.Api.Controllers.LocationController
 {
@@ -22,7 +22,7 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         [ProducesResponseType(typeof(LocationResponseContract), 400)]
         [ProducesResponseType(typeof(LocationResponseContract), 401)]
         [ProducesResponseType(typeof(LocationResponseContract), 404)]
-        public async Task<IActionResult> GetLocationAsync([AccountId(typeof(LocationResponseContract))] long pointId)
+        public async Task<IActionResult> GetLocationAsync([IdValidation(typeof(LocationResponseContract))] long pointId)
         {
             var response = await _locationService.GetLocationAsync(pointId);
             return Ok(response);
@@ -36,8 +36,9 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         [ProducesResponseType(typeof(LocationResponseContract), 400)]
         [ProducesResponseType(typeof(LocationResponseContract), 401)]
         [ProducesResponseType(typeof(LocationResponseContract), 409)]
-        public async Task<IActionResult> AddLocationAsync(LocationRequestContract contract)
+        public async Task<IActionResult> AddLocationAsync([FromBody] LocationRequestContract contract)
         {
+            await _locationService.EnsureLocationNotExists(contract);
             var response = await _locationService.AddLocationAsync(contract);
             return Ok(response);
         }
@@ -51,9 +52,12 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         [ProducesResponseType(typeof(LocationResponseContract), 401)]
         [ProducesResponseType(typeof(LocationResponseContract), 404)]
         [ProducesResponseType(typeof(LocationResponseContract), 409)]
-        public async Task<IActionResult> UpdateLocationAsync([AccountId(typeof(LocationResponseContract))] long pointId, LocationRequestContract contract)
+        public async Task<IActionResult> UpdateLocationAsync(
+            [IdValidation(typeof(LocationResponseContract))] long pointId,
+            [FromBody] LocationRequestContract contract)
         {
-            var response = await _locationService.AddLocationAsync(contract);
+            await _locationService.EnsureLocationNotExists(contract);
+            var response = await _locationService.UpdateLocationAsync(pointId, contract);
             return Ok(response);
         }
 
@@ -65,7 +69,7 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         [ProducesResponseType(typeof(LocationResponseContract), 400)]
         [ProducesResponseType(typeof(LocationResponseContract), 401)]
         [ProducesResponseType(typeof(LocationResponseContract), 404)]
-        public async Task<IActionResult> DeleteLocationAsync([AccountId(typeof(LocationResponseContract))] long pointId)
+        public async Task<IActionResult> DeleteLocationAsync([IdValidation(typeof(LocationResponseContract))] long pointId)
         {
             await _locationService.DeleteLocationAsync(pointId);
             return Ok();
