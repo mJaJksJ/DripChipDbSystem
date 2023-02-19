@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using DripChipDbSystem.Api.Controllers.LocationController;
 using Microsoft.AspNetCore.Mvc;
 using DripChipDbSystem.Database.Models.Animals;
+using DripChipDbSystem.Api.Controllers.Common.Attributes;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DripChipDbSystem.Services
 {
@@ -69,6 +71,15 @@ namespace DripChipDbSystem.Services
                 Latitude = location.Latitude,
                 Longitude = location.Longitude
             };
+        }
+
+        public async Task DeleteLocationAsync(long pointId)
+        {
+            var location = await _databaseContext.LocationPoints
+                .SingleOrDefaultAsync(x => x.Id == pointId);
+
+            _databaseContext.Remove(location);
+            await _databaseContext.SaveChangesAsync();
         }
     }
 }

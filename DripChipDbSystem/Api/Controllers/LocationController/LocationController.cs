@@ -1,5 +1,3 @@
-using System;
-using DripChipDbSystem.Api.Controllers.AccountController;
 using System.Threading.Tasks;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +22,7 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         [ProducesResponseType(typeof(LocationResponseContract), 400)]
         [ProducesResponseType(typeof(LocationResponseContract), 401)]
         [ProducesResponseType(typeof(LocationResponseContract), 404)]
-        public async Task<IActionResult> GetLocationAsync([AccountId(typeof(LocationResponseContract))] int pointId)
+        public async Task<IActionResult> GetLocationAsync([AccountId(typeof(LocationResponseContract))] long pointId)
         {
             var response = await _locationService.GetLocationAsync(pointId);
             return Ok(response);
@@ -53,10 +51,24 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         [ProducesResponseType(typeof(LocationResponseContract), 401)]
         [ProducesResponseType(typeof(LocationResponseContract), 404)]
         [ProducesResponseType(typeof(LocationResponseContract), 409)]
-        public async Task<IActionResult> UpdateLocationAsync([AccountId(typeof(LocationResponseContract))] int pointId, LocationRequestContract contract)
+        public async Task<IActionResult> UpdateLocationAsync([AccountId(typeof(LocationResponseContract))] long pointId, LocationRequestContract contract)
         {
             var response = await _locationService.AddLocationAsync(contract);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Удаление точки локации животных 
+        /// </summary>
+        [HttpDelete("/locations/{pointId}")]
+        [ProducesResponseType(typeof(LocationResponseContract), 200)]
+        [ProducesResponseType(typeof(LocationResponseContract), 400)]
+        [ProducesResponseType(typeof(LocationResponseContract), 401)]
+        [ProducesResponseType(typeof(LocationResponseContract), 404)]
+        public async Task<IActionResult> DeleteLocationAsync([AccountId(typeof(LocationResponseContract))] long pointId)
+        {
+            await _locationService.DeleteLocationAsync(pointId);
+            return Ok();
         }
     }
 }
