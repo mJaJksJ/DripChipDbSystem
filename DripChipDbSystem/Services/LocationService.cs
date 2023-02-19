@@ -6,6 +6,8 @@ using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 using Microsoft.EntityFrameworkCore;
 using DripChipDbSystem.Api.Controllers.LocationController;
+using Microsoft.AspNetCore.Mvc;
+using DripChipDbSystem.Database.Models.Animals;
 
 namespace DripChipDbSystem.Services
 {
@@ -32,6 +34,23 @@ namespace DripChipDbSystem.Services
             return new LocationResponseContract
             {
                 Id = location.Id,
+            };
+        }
+
+        public async Task<LocationResponseContract> AddLocationAsync(LocationRequestContract contract)
+        {
+            var location = await _databaseContext.LocationPoints
+                .AddAsync(new LocationPoint
+                {
+                    Latitude = contract.Latitude.Value,
+                    Longitude = contract.Longitude.Value
+                });
+            await _databaseContext.SaveChangesAsync();
+            return new LocationResponseContract
+            {
+                Id = location.Entity.Id,
+                Latitude = location.Entity.Latitude,
+                Longitude = location.Entity.Longitude
             };
         }
     }
