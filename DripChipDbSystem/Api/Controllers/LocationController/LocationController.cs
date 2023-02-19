@@ -43,5 +43,20 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
             var response = await _locationService.AddLocationAsync(contract);
             return Ok(response);
         }
+
+        /// <summary>
+        /// Изменение точки локации животных
+        /// </summary>
+        [HttpPut("/locations/{pointId}")]
+        [ProducesResponseType(typeof(LocationResponseContract), 200)]
+        [ProducesResponseType(typeof(LocationResponseContract), 400)]
+        [ProducesResponseType(typeof(LocationResponseContract), 401)]
+        [ProducesResponseType(typeof(LocationResponseContract), 404)]
+        [ProducesResponseType(typeof(LocationResponseContract), 409)]
+        public async Task<IActionResult> UpdateLocationAsync([AccountId(typeof(LocationResponseContract))] int pointId, LocationRequestContract contract)
+        {
+            var response = await _locationService.AddLocationAsync(contract);
+            return Ok(response);
+        }
     }
 }

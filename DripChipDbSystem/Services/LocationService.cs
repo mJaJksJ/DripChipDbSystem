@@ -20,7 +20,7 @@ namespace DripChipDbSystem.Services
             _databaseContext = databaseContext;
         }
 
-        public async Task<LocationResponseContract> GetLocationAsync(int pointId)
+        public async Task<LocationResponseContract> GetLocationAsync(long pointId)
         {
             var location = await _databaseContext.Accounts
                 .AsNoTracking()
@@ -51,6 +51,23 @@ namespace DripChipDbSystem.Services
                 Id = location.Entity.Id,
                 Latitude = location.Entity.Latitude,
                 Longitude = location.Entity.Longitude
+            };
+        }
+
+        public async Task<LocationResponseContract> UpdateLocationAsync(long pointId, LocationRequestContract contract)
+        {
+            var location = await _databaseContext.LocationPoints
+                .SingleOrDefaultAsync(x => x.Id == pointId);
+
+            location.Latitude = contract.Latitude.Value;
+            location.Longitude = contract.Longitude.Value;
+
+            await _databaseContext.SaveChangesAsync();
+            return new LocationResponseContract
+            {
+                Id = location.Id,
+                Latitude = location.Latitude,
+                Longitude = location.Longitude
             };
         }
     }
