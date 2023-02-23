@@ -29,6 +29,7 @@ namespace DripChipDbSystem
             builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<AnimalTypeService>();
             builder.Services.AddScoped<AnimalService>();
+            builder.Services.AddScoped<AnimalVisitedLocationService>();
 
             var app = builder.Build();
             app.UseDatabase<DatabaseContext>();

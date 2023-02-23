@@ -71,7 +71,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// <summary>
         /// Посещенные точки локации
         /// </summary>
-        public IEnumerable<AnimalVisitedLocation> VisitedLocations { get; set; }
+        public List<AnimalVisitedLocation> VisitedLocations { get; set; }
 
         /// <summary>
         /// Дата и время смерти
