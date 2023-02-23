@@ -5,7 +5,7 @@ using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 
 namespace DripChipDbSystem.Api.Common.Attributes
 {
-    [AttributeUsage(AttributeTargets.Parameter)]
+    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
     public class IdValidationAttribute : ValidationAttribute
     {
         private readonly object _defaultValue;

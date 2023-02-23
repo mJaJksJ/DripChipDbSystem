@@ -28,7 +28,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
             {
                 throw new Exception()
                 {
-                    Data = { { HttpResponseMiddleware.ResultKey, _defaultValue  } }
+                    Data = { { HttpResponseMiddleware.ResultKey, _defaultValue } }
                 };
             }
 

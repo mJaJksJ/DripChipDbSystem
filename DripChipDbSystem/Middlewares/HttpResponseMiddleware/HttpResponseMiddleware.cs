@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using DripChipDbSystem.Exceptions;
 using Microsoft.AspNetCore.Http;
@@ -34,6 +35,11 @@ namespace DripChipDbSystem.Middlewares.HttpResponseMiddleware
             {
                 context.Response.StatusCode = StatusCodes.Status409Conflict;
                 await context.Response.WriteAsJsonAsync(ex409.Data[ResultKey]);
+            }
+            catch (Exception ex)
+            {
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                await context.Response.WriteAsJsonAsync(ex.Message);
             }
         }
     }

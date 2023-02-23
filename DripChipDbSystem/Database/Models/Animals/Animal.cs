@@ -20,7 +20,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// <summary>
         /// Типы животного
         /// </summary>
-        public IEnumerable<AnimalType> AnimalType { get; set; }
+        public List<AnimalType> AnimalTypes { get; set; }
 
         /// <summary>
         /// Масса животного, кг

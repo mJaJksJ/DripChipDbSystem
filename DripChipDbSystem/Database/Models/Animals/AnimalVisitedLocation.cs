@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,7 +9,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// <summary>
         /// Id
         /// </summary>
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         /// <inheritdoc cref="Animals.Animal"/>
         public Animal Animal { get; set; }
