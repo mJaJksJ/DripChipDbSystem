@@ -57,7 +57,7 @@ namespace DripChipDbSystem.Middlewares.HttpResponseMiddleware
             catch (Exception ex)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                await context.Response.WriteAsJsonAsync(ex.Message);
+                await context.Response.WriteAsync($"{ex.Message}. {ex.InnerException?.Message}");
             }
         }
     }

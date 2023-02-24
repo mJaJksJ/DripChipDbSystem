@@ -25,7 +25,7 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
             }
 
 #pragma warning disable IDE0046
-            if (contract.Longitude is null or < -90 or > 90)
+            if (contract.Longitude is null or < -180 or > 180)
             {
                 throw new BadRequest400Exception();
             }

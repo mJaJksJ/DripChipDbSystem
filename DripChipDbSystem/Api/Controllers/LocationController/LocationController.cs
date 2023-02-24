@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
+using DripChipDbSystem.Api.Common.ResponseTypes;
 using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -42,14 +43,14 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         /// Добавление точки локации животных
         /// </summary>
         [HttpPost("/locations")]
-        [ProducesResponseType(typeof(LocationResponseContract), 200)]
+        [ProducesResponseType(typeof(LocationResponseContract), 201)]
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> AddLocationAsync([FromBody] LocationRequestContract contract)
         {
             var response = await _locationService.AddLocationAsync(contract);
-            return Ok(response);
+            return new Created201Result(response);
         }
 
         /// <summary>

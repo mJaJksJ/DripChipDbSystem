@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using DripChipDbSystem.Api.Common.ResponseTypes;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Services;
@@ -39,7 +40,7 @@ namespace DripChipDbSystem.Api.Controllers.AuthController
             }
 
             var response = await _authService.AddAccountAsync(contract);
-            return new ObjectResult(response) { StatusCode = StatusCodes.Status201Created };
+            return new Created201Result(response);
         }
     }
 }
