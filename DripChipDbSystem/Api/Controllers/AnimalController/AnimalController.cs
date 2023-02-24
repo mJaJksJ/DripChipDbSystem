@@ -133,7 +133,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
             [IdValidation] long typeId)
         {
             var response = await _animalService.AddAnimalTypeAsync(animalId, typeId);
-            return Ok(response);
+            return new Created201Result(response);
         }
 
         /// <summary>

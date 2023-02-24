@@ -1,6 +1,7 @@
 using DripChipDbSystem.Services;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
+using DripChipDbSystem.Api.Common.ResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using DripChipDbSystem.Authentification;
@@ -46,10 +47,10 @@ namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 409)]
-        public async Task<IActionResult> AddAnimalTypeAsync(AnimalTypeRequestContract contract)
+        public async Task<IActionResult> AddAnimalTypeAsync([FromBody] AnimalTypeRequestContract contract)
         {
             var response = await _animalTypeService.AddAnimalTypeAsync(contract);
-            return Ok(response);
+            return new Created201Result(response);
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
         [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> UpdateAnimalTypeAsync(
             [IdValidation] long typeId,
-            AnimalTypeRequestContract contract)
+            [FromBody] AnimalTypeRequestContract contract)
         {
             await _animalTypeService.EnsureAnimalTypeNotExists(contract);
             var response = await _animalTypeService.UpdateAnimalTypeAsync(typeId, contract);
