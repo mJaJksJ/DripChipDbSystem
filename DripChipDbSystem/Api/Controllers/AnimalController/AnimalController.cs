@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
+using DripChipDbSystem.Api.Common.ResponseTypes;
+using DripChipDbSystem.Api.Controllers.LocationController;
 using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -70,6 +72,21 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
                 from ?? 0,
                 size ?? 10);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Добавление нового животного 
+        /// </summary>
+        [HttpPost("/animals")]
+        [ProducesResponseType(typeof(AnimalResponseContract), 201)]
+        [ProducesResponseType(typeof(void), 400)]
+        [ProducesResponseType(typeof(void), 401)]
+        [ProducesResponseType(typeof(void), 404)]
+        [ProducesResponseType(typeof(void), 409)]
+        public async Task<IActionResult> AddLocationAsync([FromBody] AnimalRequestContract contract)
+        {
+            var response = await _animalService.AddAnimalAsync(contract);
+            return new Created201Result(response);
         }
 
         /// <summary>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Api.Controllers.AnimalController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Enums;
@@ -76,6 +77,7 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task<AnimalResponseContract> AddAnimalAsync(AnimalRequestContract contract)
         {
+            EnsureAnimalTypesNotRepeated(contract);
             var animalTypes = await _databaseContext.AnimalTypes
                 .Where(x => contract.AnimalTypes.Contains(x.Id))
                 .ToListAsync();
@@ -178,6 +180,16 @@ namespace DripChipDbSystem.Services
             animal.AnimalTypes.Remove(type);
             await _databaseContext.SaveChangesAsync();
             return new AnimalResponseContract(animal);
+        }
+
+        private void EnsureAnimalTypesNotRepeated(AnimalRequestContract contract)
+        {
+            var animalTypes = contract.AnimalTypes as long?[] ?? contract.AnimalTypes.ToArray();
+            if (animalTypes is not null &&
+                animalTypes.Distinct().Count() == animalTypes.Length)
+            {
+                throw new Conflict409Exception();
+            }
         }
     }
 }
