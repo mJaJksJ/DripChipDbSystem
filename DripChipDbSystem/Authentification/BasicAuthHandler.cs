@@ -16,7 +16,7 @@ namespace DripChipDbSystem.Authentification
     {
         private readonly DatabaseContext _databaseContext;
 
-        [GeneratedRegex("^Basic [A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}:(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$")]
+        [GeneratedRegex("^Basic (?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)$")]
         private static partial Regex AuthHeaderRegex();
 
         public BasicAuthHandler(
@@ -45,7 +45,9 @@ namespace DripChipDbSystem.Authentification
                 throw new Unauthorized401Exception();
             }
 
-            var authData = header.Replace("Basic ", "").Split(':');
+            var base64EncodedBytes = System.Convert.FromBase64String(header.Replace("Basic ", ""));
+            var authData = System.Text.Encoding.UTF8.GetString(base64EncodedBytes).Split(':');
+
             var login = authData[0];
             var password = authData[1];
             var user = _databaseContext.Accounts
