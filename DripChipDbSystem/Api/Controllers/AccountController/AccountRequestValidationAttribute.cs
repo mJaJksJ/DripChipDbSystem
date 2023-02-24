@@ -19,7 +19,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [GeneratedRegex(@"^\s*$")]
         private static partial Regex OnlySpaceSymbols();
 
-        [GeneratedRegex(@"^[A-Z0-9._%+-]+@([A-Z0-9-]+.+.[A-Z]{2,4})?$")]
+        [GeneratedRegex(@"^[\w\.]+@([\w]+\.[\w]{2,4}){1}$")]
         private static partial Regex Email();
 
         public override bool IsValid(object value)
@@ -50,7 +50,9 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
                 };
             }
 
-            if (OnlySpaceSymbols().IsMatch(contract.Email) || Email().IsMatch(contract.Email))
+            if (string.IsNullOrEmpty(contract.Email) ||
+                OnlySpaceSymbols().IsMatch(contract.Email) ||
+                !Email().IsMatch(contract.Email))
             {
                 throw new BadRequest400Exception()
                 {
@@ -59,6 +61,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
             }
 
             if (string.IsNullOrEmpty(contract.Password) ||
+                string.IsNullOrEmpty(contract.Password) ||
                 OnlySpaceSymbols().IsMatch(contract.Password))
             {
                 throw new BadRequest400Exception()

@@ -1,9 +1,10 @@
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AccountController;
+using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace DripChipDbSystem.Api.Controllers.AuthController
 {
@@ -33,9 +34,9 @@ namespace DripChipDbSystem.Api.Controllers.AuthController
         [ProducesResponseType(typeof(AccountResponseContract), 409)]
         public async Task<IActionResult> RegistrationAsync([FromBody] AccountRequestContract contract)
         {
-            if ( /*уже авторизирован*/false)
+            if (Request.Headers.ContainsKey(HeaderNames.Authorization))
             {
-                return new ObjectResult(new AccountResponseContract()) { StatusCode = StatusCodes.Status403Forbidden };
+                throw new Forbidden403Exception();
             }
 
             await _accountService.EnsureAccountNotExists(contract);

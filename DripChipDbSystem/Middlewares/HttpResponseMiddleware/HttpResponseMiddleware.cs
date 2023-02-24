@@ -41,6 +41,11 @@ namespace DripChipDbSystem.Middlewares.HttpResponseMiddleware
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsJsonAsync(ex401.Data[ResultKey]);
             }
+            catch (Forbidden403Exception ex403)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsJsonAsync(ex403.Data[ResultKey]);
+            }
             catch (DripChipDbSystemException ex)
             {
                 context.Response.StatusCode = StatusCodes.Status504GatewayTimeout;
