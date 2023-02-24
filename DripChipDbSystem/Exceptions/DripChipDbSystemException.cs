@@ -2,6 +2,7 @@ using System;
 
 namespace DripChipDbSystem.Exceptions
 {
+    /// <inheritdoc/>
     public abstract class DripChipDbSystemException : Exception
     {
         /// <summary>

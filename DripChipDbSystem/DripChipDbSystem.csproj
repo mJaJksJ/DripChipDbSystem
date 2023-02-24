@@ -6,6 +6,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <UserSecretsId>c91e9012-e99e-4288-b198-e2f92f1e3ae6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />

@@ -77,7 +77,8 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// Дата и время смерти
         /// </summary>
         public DateTime? DeathDateTime { get; }
-
+        
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Animal> builder)
         {
             builder.ToTable("animal");

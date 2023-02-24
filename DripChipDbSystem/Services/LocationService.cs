@@ -1,75 +1,79 @@
 using System;
-using DripChipDbSystem.Api.Controllers.AccountController;
 using System.Threading.Tasks;
-using DripChipDbSystem.Database;
-using DripChipDbSystem.Exceptions;
-using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
-using Microsoft.EntityFrameworkCore;
 using DripChipDbSystem.Api.Controllers.LocationController;
+using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Animals;
+using DripChipDbSystem.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace DripChipDbSystem.Services
 {
+    /// <summary>
+    /// Сервис работы с точками локации
+    /// </summary>
     public class LocationService
     {
         private readonly DatabaseContext _databaseContext;
 
+        /// <summary>
+        /// .ctor
+        /// </summary>
         public LocationService(DatabaseContext databaseContext)
         {
             _databaseContext = databaseContext;
         }
 
+        /// <summary>
+        /// Получение информации о точке локации животных
+        /// </summary>
         public async Task<LocationResponseContract> GetLocationAsync(long pointId)
         {
-            var location = await _databaseContext.Accounts
+            var location = await _databaseContext.LocationPoints
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == pointId);
 
-            if (location is null)
-            {
-                throw new NotFound404Exception() { Data = { { HttpResponseMiddleware.ResultKey, new LocationResponseContract() } } };
-            }
-
-            return new LocationResponseContract
-            {
-                Id = location.Id,
-            };
+            return location is null
+                ? throw new NotFound404Exception()
+                : new LocationResponseContract(location);
         }
 
+        /// <summary>
+        /// Добавление точки локации животных
+        /// </summary>
         public async Task<LocationResponseContract> AddLocationAsync(LocationRequestContract contract)
         {
-            var location = await _databaseContext.LocationPoints
-                .AddAsync(new LocationPoint
-                {
-                    Latitude = contract.Latitude.Value,
-                    Longitude = contract.Longitude.Value
-                });
-            await _databaseContext.SaveChangesAsync();
-            return new LocationResponseContract
+            await EnsureLocationNotExists(contract);
+            var newLocation = new LocationPoint
             {
-                Id = location.Entity.Id,
-                Latitude = location.Entity.Latitude,
-                Longitude = location.Entity.Longitude
+                Latitude = contract.Latitude.GetValueOrDefault(),
+                Longitude = contract.Longitude.GetValueOrDefault()
             };
+
+            await _databaseContext.LocationPoints
+                .AddAsync(newLocation);
+            await _databaseContext.SaveChangesAsync();
+            return new LocationResponseContract(newLocation);
         }
 
+        /// <summary>
+        /// Изменение точки локации животных
+        /// </summary>
         public async Task<LocationResponseContract> UpdateLocationAsync(long pointId, LocationRequestContract contract)
         {
+            await EnsureLocationNotExists(contract);
             var location = await _databaseContext.LocationPoints
                 .SingleOrDefaultAsync(x => x.Id == pointId);
 
-            location.Latitude = contract.Latitude.Value;
-            location.Longitude = contract.Longitude.Value;
+            location.Latitude = contract.Latitude.GetValueOrDefault();
+            location.Longitude = contract.Longitude.GetValueOrDefault();
 
             await _databaseContext.SaveChangesAsync();
-            return new LocationResponseContract
-            {
-                Id = location.Id,
-                Latitude = location.Latitude,
-                Longitude = location.Longitude
-            };
+            return new LocationResponseContract(location);
         }
 
+        /// <summary>
+        /// Удаление точки локации животных 
+        /// </summary>
         public async Task DeleteLocationAsync(long pointId)
         {
             var location = await _databaseContext.LocationPoints
@@ -79,14 +83,16 @@ namespace DripChipDbSystem.Services
             await _databaseContext.SaveChangesAsync();
         }
 
-        public async Task EnsureLocationNotExists(LocationRequestContract contract)
+        private async Task EnsureLocationNotExists(LocationRequestContract contract)
         {
+            const float epsilon = 0.000001f;
             var isExists = await _databaseContext.LocationPoints
-                .AnyAsync(x => x.Latitude == contract.Latitude.Value && x.Longitude == contract.Longitude.Value);
+                .AnyAsync(x => Math.Abs(x.Latitude - contract.Latitude.Value) < epsilon &&
+                    Math.Abs(x.Longitude - contract.Longitude.Value) < epsilon);
 
             if (isExists)
             {
-                throw new Conflict409Exception() { Data = { { HttpResponseMiddleware.ResultKey, new AccountResponseContract() } } };
+                throw new Conflict409Exception();
             }
         }
     }

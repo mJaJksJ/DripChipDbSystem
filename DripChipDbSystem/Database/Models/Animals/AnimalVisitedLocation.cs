@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DripChipDbSystem.Database.Models.Animals
 {
+    /// <summary>
+    /// Точка локации, посещенная животным
+    /// </summary>
     public class AnimalVisitedLocation : IEntityTypeConfiguration<AnimalVisitedLocation>
     {
         /// <summary>
@@ -32,6 +35,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// </summary>
         public DateTime VisitedDateTime { get; set; }
 
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<AnimalVisitedLocation> builder)
         {
             builder.ToTable("animal_visited_location");

@@ -17,34 +17,38 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
     {
         private readonly AnimalService _animalService;
 
+        /// <summary>
+        /// .ctor
+        /// </summary>
         public AnimalController(AnimalService animalService)
         {
             _animalService = animalService;
         }
 
         /// <summary>
-        /// Получение информации об аккаунте пользователя
+        /// Получение информации о животном
         /// </summary>
-        [HttpGet("/animals/{animalId}")]
+        [HttpGet("/animals/{animalId:long}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(AnimalResponseContract), 200)]
-        [ProducesResponseType(typeof(AnimalResponseContract), 400)]
-        [ProducesResponseType(typeof(AnimalResponseContract), 401)]
-        [ProducesResponseType(typeof(AnimalResponseContract), 404)]
-        public async Task<IActionResult> GetAnimalAsync([IdValidation(typeof(AnimalResponseContract))] int animalId)
+        [ProducesResponseType(typeof(void), 400)]
+        [ProducesResponseType(typeof(void), 401)]
+        [ProducesResponseType(typeof(void), 404)]
+        public async Task<IActionResult> GetAnimalAsync([IdValidation] long animalId)
         {
             var response = await _animalService.GetAnimalAsync(animalId);
             return Ok(response);
         }
 
         /// <summary>
-        /// Поиск аккаунтов пользователей по параметрам
+        /// Поиск животных по параметрам
         /// </summary>
         [HttpGet("/animals/search")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<AnimalResponseContract>), 200)]
-        [ProducesResponseType(typeof(IEnumerable<AnimalResponseContract>), 400)]
-        [ProducesResponseType(typeof(IEnumerable<AnimalResponseContract>), 401)]
+        [ProducesResponseType(typeof(void), 400)]
+        [ProducesResponseType(typeof(void), 401)]
+        [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> SearchAsync(
             [FromQuery] DateTime startDateTime,
             [FromQuery] DateTime endDateTime,
@@ -52,8 +56,8 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
             [FromQuery] long chippingLocationId,
             [FromQuery] string lifeStatus,
             [FromQuery] string gender,
-            [FromQuery][FromValidation(typeof(AnimalResponseContract))] int? from,
-            [FromQuery][SizeValidation(typeof(AnimalResponseContract))] int? size
+            [FromQuery][FromValidation] int? from,
+            [FromQuery][SizeValidation] int? size
             )
         {
             var response = await _animalService.SearchAsync(
@@ -69,16 +73,15 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         }
 
         /// <summary>
-        /// Обновление данных аккаунта пользователя
+        /// Обновление информации о животном 
         /// </summary>
-        [HttpPut("/animals/{animalId}")]
+        [HttpPut("/animals/{animalId:long}")]
         [ProducesResponseType(typeof(AnimalResponseContract), 200)]
-        [ProducesResponseType(typeof(AnimalResponseContract), 400)]
-        [ProducesResponseType(typeof(AnimalResponseContract), 401)]
-        [ProducesResponseType(typeof(AnimalResponseContract), 403)]
-        [ProducesResponseType(typeof(AnimalResponseContract), 409)]
+        [ProducesResponseType(typeof(void), 400)]
+        [ProducesResponseType(typeof(void), 401)]
+        [ProducesResponseType(typeof(void), 404)]
         public async Task<IActionResult> UpdateAnimalAsync(
-            [IdValidation(typeof(AnimalResponseContract))] int animalId,
+            [IdValidation] long animalId,
             AnimalRequestContract contract)
         {
             var response = await _animalService.UpdateAnimalAsync(animalId, contract);
@@ -86,14 +89,14 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         }
 
         /// <summary>
-        /// Удаление аккаунта пользователя
+        /// Удаление животного
         /// </summary>
-        [HttpDelete("/animals/{animalId}")]
+        [HttpDelete("/animals/{animalId:long}")]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
-        [ProducesResponseType(typeof(void), 403)]
-        public async Task<IActionResult> DeleteAnimalAsync([IdValidation(typeof(AnimalResponseContract))] int animalId)
+        [ProducesResponseType(typeof(void), 404)]
+        public async Task<IActionResult> DeleteAnimalAsync([IdValidation] long animalId)
         {
             await _animalService.DeleteAnimalAsync(animalId);
             return Ok();
@@ -102,14 +105,15 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// <summary>
         /// Добавление типа животного к животному
         /// </summary>
-        [HttpPost("/animals/{animalId}/types/{typeId}")]
+        [HttpPost("/animals/{animalId:long}/types/{typeId:long}")]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 404)]
+        [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> AddAnimalType(
-            [IdValidation(typeof(AnimalResponseContract))] long animalId,
-            [IdValidation(typeof(AnimalResponseContract))] long typeId)
+            [IdValidation] long animalId,
+            [IdValidation] long typeId)
         {
             var response = await _animalService.AddAnimalTypeAsync(animalId, typeId);
             return Ok(response);
@@ -118,14 +122,14 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// <summary>
         ///  Изменение типа животного у животного
         /// </summary>
-        [HttpPost("/animals/{animalId}/types")]
+        [HttpPost("/animals/{animalId:long}/types")]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 404)]
         [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> UpdatenimalType(
-            [IdValidation(typeof(AnimalResponseContract))] long animalId,
+            [IdValidation] long animalId,
             TypeRequestContract contract)
         {
             var response = await _animalService.UpdateAnimalTypeAsync(animalId, contract);
@@ -133,18 +137,18 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         }
 
         /// <summary>
-        /// Добавление типа животного к животному
+        /// Удаление типа животного у животного
         /// </summary>
-        [HttpDelete("/animals/{animalId}/types/{typeId}")]
+        [HttpDelete("/animals/{animalId:long}/types/{typeId:long}")]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 404)]
         public async Task<IActionResult> DeleteAnimalType(
-            [IdValidation(typeof(AnimalResponseContract))] long animalId,
-            [IdValidation(typeof(AnimalResponseContract))] long typeId)
+            [IdValidation] long animalId,
+            [IdValidation] long typeId)
         {
-            var response = await _animalService.AddAnimalTypeAsync(animalId, typeId);
+            var response = await _animalService.DeleteAnimalTypeAsync(animalId, typeId);
             return Ok(response);
         }
     }

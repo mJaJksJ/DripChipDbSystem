@@ -1,10 +1,13 @@
 namespace DripChipDbSystem.Api.Controllers.AccountController
 {
-    [AccountRequestValidation(typeof(AccountRequestContract))]
+    /// <summary>
+    /// Контракт запроса аккаунта
+    /// </summary>
+    [AccountRequestValidation]
     public class AccountRequestContract
     {
         /// <summary>
-        /// Иимя пользователя
+        /// Имя пользователя
         /// </summary>
         public string FirstName { get; set; }
 
@@ -24,4 +27,3 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         public string Password { get; set; }
     }
 }
-

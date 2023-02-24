@@ -5,6 +5,9 @@ namespace Startup.Configuration
     /// </summary>
     public class DatabaseConfig
     {
+        /// <summary>
+        /// Имя в конфиге
+        /// </summary>
         public static string ConfigName => "Database";
 
         /// <summary>

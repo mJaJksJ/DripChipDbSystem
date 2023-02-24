@@ -9,6 +9,7 @@ using Startup.Startup;
 
 namespace DripChipDbSystem
 {
+#pragma warning disable CS1591
     public class Program
     {
         public static void Main(string[] args)
@@ -24,12 +25,7 @@ namespace DripChipDbSystem
 
             builder.Services.AdddDatabaseService<DatabaseContext>(builder.Configuration);
 
-            builder.Services.AddScoped<AuthService>();
-            builder.Services.AddScoped<AccountService>();
-            builder.Services.AddScoped<LocationService>();
-            builder.Services.AddScoped<AnimalTypeService>();
-            builder.Services.AddScoped<AnimalService>();
-            builder.Services.AddScoped<AnimalVisitedLocationService>();
+            builder.Services.AddDripChipServices();
 
             builder.Services.AddAuthentication(options => options.DefaultScheme = BasicAuth.Scheme)
                 .AddScheme<BasicAuthSchemeOptions, BasicAuthHandler>(BasicAuth.Scheme, _ => { });

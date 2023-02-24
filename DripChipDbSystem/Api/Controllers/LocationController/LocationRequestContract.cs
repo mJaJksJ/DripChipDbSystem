@@ -1,9 +1,9 @@
-using System;
-using DripChipDbSystem.Api.Controllers.AccountController;
-
 namespace DripChipDbSystem.Api.Controllers.LocationController
 {
-    [LocationRequestValidation(typeof(LocationRequestContract))]
+    /// <summary>
+    /// Контракт запроса точки локации
+    /// </summary>
+    [LocationRequestValidation]
     public class LocationRequestContract
     {
         /// <summary>

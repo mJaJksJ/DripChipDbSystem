@@ -2,6 +2,9 @@ using System;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
 {
+    /// <summary>
+    /// Ответ на запрос посещенной животным точки локации
+    /// </summary>
     public class AnimalVisitedLocationResponseContract
     {
         /// <summary>
@@ -18,5 +21,15 @@ namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
         /// Идентификатор посещенной точки локации
         /// </summary>
         public long LocationPointId { get; set; }
+
+        /// <summary>
+        /// .ctor
+        /// </summary>
+        public AnimalVisitedLocationResponseContract(Database.Models.Animals.AnimalVisitedLocation animalVisitedLocation)
+        {
+            Id = animalVisitedLocation.Id;
+            LocationPointId = animalVisitedLocation.LocationPointId;
+            DateTimeOfVisitLocationPoint = animalVisitedLocation.VisitedDateTime;
+        }
     }
 }

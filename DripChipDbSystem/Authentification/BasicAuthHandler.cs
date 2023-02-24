@@ -12,6 +12,9 @@ using Microsoft.Net.Http.Headers;
 
 namespace DripChipDbSystem.Authentification
 {
+    /// <summary>
+    /// Обработчик простой аутентификации
+    /// </summary>
     public partial class BasicAuthHandler : AuthenticationHandler<BasicAuthSchemeOptions>
     {
         private readonly DatabaseContext _databaseContext;
@@ -19,6 +22,9 @@ namespace DripChipDbSystem.Authentification
         [GeneratedRegex("^Basic (?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)$")]
         private static partial Regex AuthHeaderRegex();
 
+        /// <summary>
+        /// .ctor
+        /// </summary>
         public BasicAuthHandler(
             IOptionsMonitor<BasicAuthSchemeOptions> options,
             ILoggerFactory logger,
@@ -30,6 +36,7 @@ namespace DripChipDbSystem.Authentification
             _databaseContext = databaseContext;
         }
 
+        /// <inheritdoc/>
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (!Request.Headers.ContainsKey(HeaderNames.Authorization))
@@ -38,21 +45,19 @@ namespace DripChipDbSystem.Authentification
             }
 
             var header = Request.Headers[HeaderNames.Authorization].ToString();
-            var tokenMatch = AuthHeaderRegex().Match(header);
 
-            if (!tokenMatch.Success)
+            if (!AuthHeaderRegex().Match(header).Success)
             {
                 throw new Unauthorized401Exception();
             }
 
             var base64EncodedBytes = System.Convert.FromBase64String(header.Replace("Basic ", ""));
             var authData = System.Text.Encoding.UTF8.GetString(base64EncodedBytes).Split(':');
-
             var login = authData[0];
             var password = authData[1];
+
             var user = _databaseContext.Accounts
                 .SingleOrDefault(x => x.Email == login && x.PasswordHash == password);
-
             if (user is null)
             {
                 throw new Unauthorized401Exception();

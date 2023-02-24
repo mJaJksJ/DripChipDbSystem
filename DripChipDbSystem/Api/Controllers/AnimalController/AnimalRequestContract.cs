@@ -2,7 +2,10 @@ using System.Collections.Generic;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalController
 {
-    [AnimalRequestValidation(typeof(AnimalRequestContract))]
+    /// <summary>
+    /// Контракт запроса животного
+    /// </summary>
+    [AnimalRequestValidation]
     public class AnimalRequestContract
     {
         /// <summary>

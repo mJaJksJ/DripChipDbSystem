@@ -1,5 +1,10 @@
+using DripChipDbSystem.Database.Models.Auth;
+
 namespace DripChipDbSystem.Api.Controllers.AccountController
 {
+    /// <summary>
+    /// Ответ на запрос аккаунта
+    /// </summary>
     public class AccountResponseContract
     {
         /// <summary>
@@ -21,5 +26,16 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         /// Адрес электронной почты
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// .ctor
+        /// </summary>
+        public AccountResponseContract(Account account)
+        {
+            Id = account.Id;
+            FirstName = account.FirstName;
+            LastName = account.LastName;
+            Email = account.Email;
+        }
     }
 }

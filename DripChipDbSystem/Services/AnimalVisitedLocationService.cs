@@ -1,56 +1,56 @@
-using DripChipDbSystem.Api.Controllers.AnimalController;
-using DripChipDbSystem.Database.Enums;
-using DripChipDbSystem.Database.Models.Animals;
-using DripChipDbSystem.Database;
-using DripChipDbSystem.Exceptions;
-using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AnimalVisitedLocation;
-using DripChipDbSystem.Utils;
+using DripChipDbSystem.Database;
+using DripChipDbSystem.Database.Models.Animals;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Contracts;
-using System.Security.Cryptography.X509Certificates;
 
 namespace DripChipDbSystem.Services
 {
+    /// <summary>
+    /// Сервис работы с точками локации, которые посетило животное
+    /// </summary>
     public class AnimalVisitedLocationService
     {
         private readonly DatabaseContext _databaseContext;
 
+        /// <summary>
+        /// .ctor
+        /// </summary>
         public AnimalVisitedLocationService(DatabaseContext databaseContext)
         {
             _databaseContext = databaseContext;
         }
 
+        /// <summary>
+        /// Просмотр точек локации, посещенных животным
+        /// </summary>
         public async Task<IEnumerable<AnimalVisitedLocationResponseContract>> SearchAsync(
             long animalId,
             DateTime startDateTime,
             DateTime endDateTime,
-            int from,
-            int size)
+            int? from,
+            int? size)
         {
-            return await _databaseContext.AnimalVisitedLocations
+            return (await _databaseContext.AnimalVisitedLocations
                 .AsNoTracking()
                 .Where(x =>
                     x.AnimalId == animalId &&
                     x.VisitedDateTime >= startDateTime &&
                     x.VisitedDateTime <= endDateTime
                 )
-                .Skip(from)
-                .Take(size)
-                .Select(x => new AnimalVisitedLocationResponseContract
-                {
-                    Id = x.Id,
-                    LocationPointId = x.LocationPointId,
-                    DateTimeOfVisitLocationPoint = x.VisitedDateTime
-                })
+                .Skip(from ?? 0)
+                .Take(size ?? 10)
                 .OrderBy(x => x.Id)
-                .ToListAsync();
+                .ToListAsync())
+                .Select(x => new AnimalVisitedLocationResponseContract(x));
         }
 
+        /// <summary>
+        /// Добавление точки локации, посещенной животным
+        /// </summary>
         public async Task<AnimalVisitedLocationResponseContract> AddAnimalVisitedLocationAsync(long animalId, long pointId)
         {
             var newAnimalVisitedLocation = new AnimalVisitedLocation
@@ -62,14 +62,12 @@ namespace DripChipDbSystem.Services
             await _databaseContext.AddAsync(newAnimalVisitedLocation);
             await _databaseContext.SaveChangesAsync();
 
-            return new AnimalVisitedLocationResponseContract
-            {
-                Id = newAnimalVisitedLocation.Id,
-                LocationPointId = newAnimalVisitedLocation.LocationPointId,
-                DateTimeOfVisitLocationPoint = newAnimalVisitedLocation.VisitedDateTime
-            };
+            return new AnimalVisitedLocationResponseContract(newAnimalVisitedLocation);
         }
 
+        /// <summary>
+        /// Изменение точки локации, посещенной животным
+        /// </summary>
         public async Task<AnimalVisitedLocationResponseContract> UpdateAnimalVisitedLocationAsync(long animalId, AnimalVisitedLocationRequestContract contract)
         {
             var animalVisitedLocation = await _databaseContext.AnimalVisitedLocations
@@ -78,14 +76,12 @@ namespace DripChipDbSystem.Services
             animalVisitedLocation.LocationPointId = contract.LocationPointId;
 
             await _databaseContext.SaveChangesAsync();
-            return new AnimalVisitedLocationResponseContract
-            {
-                Id = animalVisitedLocation.Id,
-                LocationPointId = animalVisitedLocation.LocationPointId,
-                DateTimeOfVisitLocationPoint = animalVisitedLocation.VisitedDateTime
-            };
+            return new AnimalVisitedLocationResponseContract(animalVisitedLocation);
         }
 
+        /// <summary>
+        /// Удаление точки локации, посещенной животным
+        /// </summary>
         public async Task DeleteAnimalVisitedLocationAsync(long animalId, long visitedPointId)
         {
             var animal = await _databaseContext.AnimalVisitedLocations

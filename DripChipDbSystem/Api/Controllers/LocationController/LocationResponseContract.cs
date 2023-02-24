@@ -1,6 +1,10 @@
-using System;
+using DripChipDbSystem.Database.Models.Animals;
+
 namespace DripChipDbSystem.Api.Controllers.LocationController
 {
+    /// <summary>
+    /// Ответ на запрос точки локации
+    /// </summary>
     public class LocationResponseContract
     {
         /// <summary>
@@ -17,6 +21,16 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         ///  Географическая долгота в градусах
         /// </summary>
         public double Longitude { get; set; }
+
+        /// <summary>
+        /// .ctor
+        /// </summary>
+        public LocationResponseContract(LocationPoint location)
+        {
+            Id = location.Id;
+            Latitude = location.Latitude;
+            Longitude = location.Longitude;
+        }
     }
 }
 

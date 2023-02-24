@@ -1,23 +1,35 @@
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AccountController;
-using DripChipDbSystem.Api.Controllers.AuthController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Auth;
-using Microsoft.EntityFrameworkCore;
 
 namespace DripChipDbSystem.Services
 {
+    /// <summary>
+    /// Сервис работы с аутентификацией
+    /// </summary>
     public class AuthService
     {
         private readonly DatabaseContext _databaseContext;
+        private readonly AccountService _accountService;
 
-        public AuthService(DatabaseContext databaseContext)
+        /// <summary>
+        /// .ctor
+        /// </summary>
+        public AuthService(DatabaseContext databaseContext,
+            AccountService accountService)
         {
             _databaseContext = databaseContext;
+            _accountService = accountService;
         }
 
+        /// <summary>
+        /// Регистрация нового аккаунта
+        /// </summary>
         public async Task<AccountResponseContract> AddAccountAsync(AccountRequestContract contract)
         {
+            await _accountService.EnsureAccountNotExists(contract);
+
             var newAccount = new Account
             {
                 FirstName = contract.FirstName,
@@ -29,13 +41,7 @@ namespace DripChipDbSystem.Services
             await _databaseContext.AddAsync(newAccount);
             await _databaseContext.SaveChangesAsync();
 
-            return new AccountResponseContract
-            {
-                Id = newAccount.Id,
-                FirstName = newAccount.FirstName,
-                LastName = newAccount.LastName,
-                Email = newAccount.Email,
-            };
+            return new AccountResponseContract(newAccount);
         }
     }
 }

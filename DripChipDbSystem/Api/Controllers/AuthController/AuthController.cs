@@ -14,14 +14,13 @@ namespace DripChipDbSystem.Api.Controllers.AuthController
     public class AuthController : Controller
     {
         private readonly AuthService _authService;
-        private readonly AccountService _accountService;
 
-        public AuthController(
-            AuthService authService,
-            AccountService accountService)
+        /// <summary>
+        /// .ctor
+        /// </summary>
+        public AuthController(AuthService authService)
         {
             _authService = authService;
-            _accountService = accountService;
         }
 
         /// <summary>
@@ -29,9 +28,9 @@ namespace DripChipDbSystem.Api.Controllers.AuthController
         /// </summary>
         [HttpPost("/registration")]
         [ProducesResponseType(typeof(AccountResponseContract), 201)]
-        [ProducesResponseType(typeof(AccountResponseContract), 400)]
-        [ProducesResponseType(typeof(AccountResponseContract), 403)]
-        [ProducesResponseType(typeof(AccountResponseContract), 409)]
+        [ProducesResponseType(typeof(void), 400)]
+        [ProducesResponseType(typeof(void), 403)]
+        [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> RegistrationAsync([FromBody] AccountRequestContract contract)
         {
             if (Request.Headers.ContainsKey(HeaderNames.Authorization))
@@ -39,7 +38,6 @@ namespace DripChipDbSystem.Api.Controllers.AuthController
                 throw new Forbidden403Exception();
             }
 
-            await _accountService.EnsureAccountNotExists(contract);
             var response = await _authService.AddAccountAsync(contract);
             return new ObjectResult(response) { StatusCode = StatusCodes.Status201Created };
         }

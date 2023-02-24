@@ -22,7 +22,8 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// Географическая долгота в градусах
         /// </summary>
         public double Longitude { get; set; }
-        
+
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<LocationPoint> builder)
         {
             builder.ToTable("location_point");

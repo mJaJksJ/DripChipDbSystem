@@ -33,6 +33,7 @@ namespace DripChipDbSystem.Database.Models.Auth
         /// </summary>
         public string PasswordHash { get; set; }
 
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Account> builder)
         {
             builder.ToTable("account");

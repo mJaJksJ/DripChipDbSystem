@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DripChipDbSystem.Database.Models.Animals
@@ -18,6 +18,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// </summary>
         public string Type { get; set; }
 
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<AnimalType> builder)
         {
             builder.ToTable("animal_type");

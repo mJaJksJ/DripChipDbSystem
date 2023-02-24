@@ -7,11 +7,18 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace DripChipDbSystem.Database
 {
+    /// <summary>
+    /// Расширения для трекера изменений
+    /// </summary>
     public static class ChangeTrackerExtensions
     {
+        /// <summary>
+        /// Обработка изменений <see cref="Animal"/>
+        /// </summary>
         public static void AnimalTracker(this ChangeTracker changeTracker)
         {
-            foreach (var item in changeTracker.Entries<Animal>().Where(e => e.State == EntityState.Modified))
+            foreach (var item in changeTracker.Entries<Animal>()
+                .Where(e => e.State == EntityState.Modified))
             {
                 if (item.Entity.LifeStatus == LifeStatus.Dead)
                 {

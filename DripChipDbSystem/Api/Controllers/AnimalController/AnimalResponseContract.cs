@@ -1,11 +1,14 @@
-using DripChipDbSystem.Database.Enums;
-using DripChipDbSystem.Database.Models.Animals;
-using DripChipDbSystem.Database.Models.Auth;
 using System.Collections.Generic;
 using System;
+using System.Linq;
+using DripChipDbSystem.Database.Models.Animals;
+using DripChipDbSystem.Utils;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalController
 {
+    /// <summary>
+    /// Ответ на запрос животного
+    /// </summary>
     public class AnimalResponseContract
     {
         /// <summary>
@@ -35,7 +38,6 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
 
         /// <summary>
         /// Гендерный признак животного, доступные значения “MALE”, “FEMALE”, “OTHER”
-
         /// </summary>
         public string Gender { get; set; }
 
@@ -69,5 +71,24 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// Дата и время смерти
         /// </summary>
         public DateTime DeathDateTime { get; set; }
+
+        /// <summary>
+        /// .ctor
+        /// </summary>
+        public AnimalResponseContract(Animal animal)
+        {
+            Id = animal.Id;
+            AnimalTypes = animal.AnimalTypes.Select(x => x.Id);
+            Weight = animal.Weight;
+            Length = animal.Length;
+            Height = animal.Height;
+            Gender = animal.Gender.GetMemberValue();
+            LifeStatus = animal.LifeStatus.GetMemberValue();
+            ChippingDateTime = animal.ChippingDateTime;
+            ChipperId = animal.ChipperId;
+            ChippingLocationPointId = animal.ChippingLocationPointId;
+            VisitedLocations = animal.VisitedLocations.Select(x => x.Id);
+            DeathDateTime = animal.DeathDateTime.GetValueOrDefault();
+        }
     }
 }

@@ -1,6 +1,9 @@
 namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
 {
-    [AnimalTypeValidation(typeof(AnimalTypeRequestContract))]
+    /// <summary>
+    /// Контракт запроса типа животного
+    /// </summary>
+    [AnimalTypeRequestValidation]
     public class AnimalTypeRequestContract
     {
         /// <summary>
