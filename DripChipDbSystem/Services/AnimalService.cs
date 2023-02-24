@@ -182,11 +182,11 @@ namespace DripChipDbSystem.Services
             return new AnimalResponseContract(animal);
         }
 
-        private void EnsureAnimalTypesNotRepeated(AnimalRequestContract contract)
+        private static void EnsureAnimalTypesNotRepeated(AnimalRequestContract contract)
         {
             var animalTypes = contract.AnimalTypes as long?[] ?? contract.AnimalTypes.ToArray();
             if (animalTypes is not null &&
-                animalTypes.Distinct().Count() == animalTypes.Length)
+                animalTypes.Distinct().Count() != animalTypes.Length)
             {
                 throw new Conflict409Exception();
             }
