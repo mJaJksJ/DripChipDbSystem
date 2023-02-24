@@ -61,8 +61,7 @@ namespace DripChipDbSystem.Services
         public async Task<LocationResponseContract> UpdateLocationAsync(long pointId, LocationRequestContract contract)
         {
             await EnsureLocationNotExists(contract);
-            var location = await _databaseContext.LocationPoints
-                .SingleOrDefaultAsync(x => x.Id == pointId);
+            var location = await EnsureLocationExists(pointId);
 
             location.Latitude = contract.Latitude.GetValueOrDefault();
             location.Longitude = contract.Longitude.GetValueOrDefault();
@@ -76,9 +75,7 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task DeleteLocationAsync(long pointId)
         {
-            var location = await _databaseContext.LocationPoints
-                .SingleOrDefaultAsync(x => x.Id == pointId);
-
+            var location = await EnsureLocationExists(pointId);
             _databaseContext.Remove(location);
             await _databaseContext.SaveChangesAsync();
         }
@@ -94,6 +91,14 @@ namespace DripChipDbSystem.Services
             {
                 throw new Conflict409Exception();
             }
+        }
+
+        private async Task<LocationPoint> EnsureLocationExists(long pointId)
+        {
+            var location = await _databaseContext.LocationPoints
+                .SingleOrDefaultAsync(x => x.Id == pointId);
+
+            return location ?? throw new NotFound404Exception();
         }
     }
 }
