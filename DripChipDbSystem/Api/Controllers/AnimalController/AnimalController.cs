@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
+using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalController
@@ -10,6 +12,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
     /// <summary>
     /// Животное
     /// </summary>
+    [Authorize(AuthenticationSchemes = BasicAuth.Scheme)]
     public class AnimalController : Controller
     {
         private readonly AnimalService _animalService;
@@ -23,6 +26,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// Получение информации об аккаунте пользователя
         /// </summary>
         [HttpGet("/animals/{animalId}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(AnimalResponseContract), 200)]
         [ProducesResponseType(typeof(AnimalResponseContract), 400)]
         [ProducesResponseType(typeof(AnimalResponseContract), 401)]
@@ -37,6 +41,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// Поиск аккаунтов пользователей по параметрам
         /// </summary>
         [HttpGet("/animals/search")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<AnimalResponseContract>), 200)]
         [ProducesResponseType(typeof(IEnumerable<AnimalResponseContract>), 400)]
         [ProducesResponseType(typeof(IEnumerable<AnimalResponseContract>), 401)]

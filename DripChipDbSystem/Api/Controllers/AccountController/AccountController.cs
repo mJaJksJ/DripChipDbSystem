@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
+using DripChipDbSystem.Authentification;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DripChipDbSystem.Api.Controllers.AccountController
 {
     /// <summary>
     /// Аккаунт пользователя
     /// </summary>
+    [Authorize(AuthenticationSchemes = BasicAuth.Scheme)]
     public class AccountController : Controller
     {
         private readonly AccountService _accountService;
@@ -22,6 +25,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         /// Получение информации об аккаунте пользователя
         /// </summary>
         [HttpGet("/accounts/{accountId}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(AccountResponseContract), 200)]
         [ProducesResponseType(typeof(AccountResponseContract), 400)]
         [ProducesResponseType(typeof(AccountResponseContract), 401)]
@@ -36,6 +40,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         /// Поиск аккаунтов пользователей по параметрам
         /// </summary>
         [HttpGet("/accounts/search")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<AccountResponseContract>), 200)]
         [ProducesResponseType(typeof(IEnumerable<AccountResponseContract>), 400)]
         [ProducesResponseType(typeof(IEnumerable<AccountResponseContract>), 401)]

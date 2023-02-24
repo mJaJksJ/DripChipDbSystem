@@ -2,9 +2,12 @@ using DripChipDbSystem.Services;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using DripChipDbSystem.Authentification;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
 {
+    [Authorize(AuthenticationSchemes = BasicAuth.Scheme)]
     public class AnimalTypeController : Controller
     {
         private readonly AnimalTypeService _animalTypeService;
@@ -18,6 +21,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
         /// Получение информации о точке локации животных
         /// </summary>
         [HttpGet("/animals/types/{typeId}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 200)]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 400)]
         [ProducesResponseType(typeof(AnimalTypeResponseContract), 401)]

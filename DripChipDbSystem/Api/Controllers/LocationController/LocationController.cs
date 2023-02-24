@@ -1,10 +1,13 @@
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
+using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DripChipDbSystem.Api.Controllers.LocationController
 {
+    [Authorize(AuthenticationSchemes = BasicAuth.Scheme)]
     public class LocationController : Controller
     {
         private readonly LocationService _locationService;
@@ -18,6 +21,7 @@ namespace DripChipDbSystem.Api.Controllers.LocationController
         /// Получение информации о точке локации животных
         /// </summary>
         [HttpGet("/locations/{pointId}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(LocationResponseContract), 200)]
         [ProducesResponseType(typeof(LocationResponseContract), 400)]
         [ProducesResponseType(typeof(LocationResponseContract), 401)]

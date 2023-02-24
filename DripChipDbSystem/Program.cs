@@ -1,10 +1,10 @@
+using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Startup.Startup;
 
 namespace DripChipDbSystem
@@ -31,7 +31,11 @@ namespace DripChipDbSystem
             builder.Services.AddScoped<AnimalService>();
             builder.Services.AddScoped<AnimalVisitedLocationService>();
 
+            builder.Services.AddAuthentication(options => options.DefaultScheme = BasicAuth.Scheme)
+                .AddScheme<BasicAuthSchemeOptions, BasicAuthHandler>(BasicAuth.Scheme, _ => { });
+
             var app = builder.Build();
+            app.UseHttpResponseMiddleware();
             app.UseDatabase<DatabaseContext>();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -42,9 +46,10 @@ namespace DripChipDbSystem
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseHttpResponseMiddleware();
+
 
             app.MapControllers();
 

@@ -19,7 +19,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [GeneratedRegex(@"^\s*$")]
         private static partial Regex OnlySpaceSymbols();
 
-        [GeneratedRegex(@"^\s*$")]
+        [GeneratedRegex(@"^[A-Z0-9._%+-]+@([A-Z0-9-]+.+.[A-Z]{2,4})?$")]
         private static partial Regex Email();
 
         public override bool IsValid(object value)

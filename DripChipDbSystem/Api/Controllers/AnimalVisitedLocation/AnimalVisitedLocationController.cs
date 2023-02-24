@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Authorization;
+using DripChipDbSystem.Authentification;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
 {
+    [Authorize(AuthenticationSchemes = BasicAuth.Scheme)]
     public class AnimalVisitedLocationController : Controller
     {
         private readonly AnimalVisitedLocationService _animalService;
@@ -21,6 +24,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
         /// Поиск аккаунтов пользователей по параметрам
         /// </summary>
         [HttpGet("/animals/{animalId}/locations")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<AnimalVisitedLocationResponseContract>), 200)]
         [ProducesResponseType(typeof(IEnumerable<AnimalVisitedLocationResponseContract>), 400)]
         [ProducesResponseType(typeof(IEnumerable<AnimalVisitedLocationResponseContract>), 401)]
