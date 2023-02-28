@@ -19,6 +19,6 @@ namespace DripChipDbSystem.Exceptions
         }
 
         /// <inheritdoc/>
-        public override string Message => $"DripChipDbSystem process error:\n ({RussianMessage})";
+        public override string Message => $"DripChipDbSystem process error: {RussianMessage}";
     }
 }

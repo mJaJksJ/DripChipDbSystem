@@ -46,7 +46,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// <summary>
         /// Дата и время чипирования
         /// </summary>
-        public DateTime ChippingDateTime { get; set; }
+        public DateTimeOffset ChippingDateTime { get; set; }
 
         /// <summary>
         /// Аккаунта чиппера
@@ -76,8 +76,8 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// <summary>
         /// Дата и время смерти
         /// </summary>
-        public DateTime? DeathDateTime { get; }
-        
+        public DateTimeOffset? DeathDateTime { get; }
+
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Animal> builder)
         {

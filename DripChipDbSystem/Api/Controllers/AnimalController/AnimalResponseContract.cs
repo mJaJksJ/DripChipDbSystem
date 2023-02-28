@@ -49,7 +49,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// <summary>
         /// Дата и время чипирования
         /// </summary>
-        public DateTime ChippingDateTime { get; set; }
+        public string ChippingDateTime { get; set; }
 
         /// <summary>
         /// Идентификатор аккаунта чиппера
@@ -60,7 +60,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// <summary>
         /// Идентификатор точки локации животных
         /// </summary>
-        public long ChippingLocationPointId { get; set; }
+        public long ChippingLocationId { get; set; }
 
         /// <summary>
         /// Массив идентификаторов объектов с информацией о посещенных точках локаций
@@ -70,7 +70,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// <summary>
         /// Дата и время смерти
         /// </summary>
-        public DateTime DeathDateTime { get; set; }
+        public string DeathDateTime { get; set; }
 
         /// <summary>
         /// .ctor
@@ -78,17 +78,17 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         public AnimalResponseContract(Animal animal)
         {
             Id = animal.Id;
-            AnimalTypes = animal.AnimalTypes.Select(x => x.Id);
+            AnimalTypes = animal.AnimalTypes?.Select(x => x.Id) ?? new long[] { 0 };
             Weight = animal.Weight;
             Length = animal.Length;
             Height = animal.Height;
             Gender = animal.Gender.GetMemberValue();
             LifeStatus = animal.LifeStatus.GetMemberValue();
-            ChippingDateTime = animal.ChippingDateTime;
+            ChippingDateTime = animal.ChippingDateTime.ToString("O");
             ChipperId = animal.ChipperId;
-            ChippingLocationPointId = animal.ChippingLocationPointId;
-            VisitedLocations = animal.VisitedLocations.Select(x => x.Id);
-            DeathDateTime = animal.DeathDateTime.GetValueOrDefault();
+            ChippingLocationId = animal.ChippingLocationPointId;
+            VisitedLocations = animal.VisitedLocations?.Select(x => x.Id) ?? new long[] { 0 };
+            DeathDateTime = animal.DeathDateTime?.ToString("O");
         }
     }
 }
