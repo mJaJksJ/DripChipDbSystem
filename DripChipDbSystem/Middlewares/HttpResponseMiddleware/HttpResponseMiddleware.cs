@@ -51,7 +51,7 @@ namespace DripChipDbSystem.Middlewares.HttpResponseMiddleware
             }
             catch (Forbidden403Exception ex403)
             {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 await context.Response.WriteAsJsonAsync(ex403.Message);
             }
             catch (Exception ex)

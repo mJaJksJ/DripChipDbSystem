@@ -1,7 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Linq;
 using System.Text.Encodings.Web;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Exceptions;
@@ -15,12 +16,9 @@ namespace DripChipDbSystem.Authentification
     /// <summary>
     /// Обработчик простой аутентификации
     /// </summary>
-    public partial class BasicAuthHandler : AuthenticationHandler<BasicAuthSchemeOptions>
+    public class BasicAuthHandler : AuthenticationHandler<BasicAuthSchemeOptions>
     {
         private readonly DatabaseContext _databaseContext;
-
-        [GeneratedRegex("^Basic (?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)$")]
-        private static partial Regex AuthHeaderRegex();
 
         /// <summary>
         /// .ctor
@@ -44,15 +42,18 @@ namespace DripChipDbSystem.Authentification
                 return Task.FromResult(AuthenticateResult.Fail(""));
             }
 
-            var header = Request.Headers[HeaderNames.Authorization].ToString();
-
-            if (!AuthHeaderRegex().Match(header).Success)
+            string[] authData;
+            try
+            {
+                var header = Request.Headers[HeaderNames.Authorization].ToString();
+                var base64EncodedBytes = Convert.FromBase64String(header.Replace("Basic ", ""));
+                authData = System.Text.Encoding.UTF8.GetString(base64EncodedBytes).Split(':');
+            }
+            catch (FormatException)
             {
                 throw new Unauthorized401Exception();
             }
 
-            var base64EncodedBytes = System.Convert.FromBase64String(header.Replace("Basic ", ""));
-            var authData = System.Text.Encoding.UTF8.GetString(base64EncodedBytes).Split(':');
             var login = authData[0];
             var password = authData[1];
 
@@ -63,7 +64,12 @@ namespace DripChipDbSystem.Authentification
                 throw new Unauthorized401Exception();
             }
 
-            var claimsIdentity = new ClaimsIdentity(nameof(BasicAuthHandler));
+            var claims = new List<Claim>
+            {
+                new(BasicAuth.Sid, user.Id.ToString()),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, nameof(BasicAuthHandler));
             var ticket = new AuthenticationTicket(new ClaimsPrincipal(claimsIdentity), Scheme.Name);
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }

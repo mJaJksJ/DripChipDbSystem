@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
 using DripChipDbSystem.Authentification;
+using DripChipDbSystem.Utils;
 using Microsoft.AspNetCore.Authorization;
 
 namespace DripChipDbSystem.Api.Controllers.AccountController
@@ -74,9 +75,9 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> UpdateAccountAsync(
             [IdValidation] int accountId,
-            AccountRequestContract contract)
+            [FromBody] AccountRequestContract contract)
         {
-            var response = await _accountService.UpdateAccountAsync(accountId, contract);
+            var response = await _accountService.UpdateAccountAsync(accountId, contract, User.GetUserId());
             return Ok(response);
         }
 
@@ -90,7 +91,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [ProducesResponseType(typeof(void), 403)]
         public async Task<IActionResult> DeleteAccountAsync([IdValidation] int accountId)
         {
-            await _accountService.DeleteAccountAsync(accountId);
+            await _accountService.DeleteAccountAsync(accountId, User.GetUserId());
             return Ok();
         }
     }

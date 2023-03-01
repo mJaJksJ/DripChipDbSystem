@@ -1,5 +1,6 @@
 using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Database;
+using DripChipDbSystem.Middlewares.BasicLogOutMiddleware;
 using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Builder;
@@ -31,6 +32,8 @@ namespace DripChipDbSystem
                 .AddScheme<BasicAuthSchemeOptions, BasicAuthHandler>(BasicAuth.Scheme, _ => { });
 
             var app = builder.Build();
+
+            app.UseBasicLogOutMiddlewareExtensions();
             app.UseHttpResponseMiddleware();
             app.UseDatabase<DatabaseContext>();
             // Configure the HTTP request pipeline.

@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Database;
@@ -54,9 +50,9 @@ namespace DripChipDbSystem.Services
         {
             return (await _databaseContext.Accounts
                 .AsNoTracking()
-                .Where(Filter(x => x.FirstName, firstName))
-                .Where(Filter(x => x.LastName, lastName))
-                .Where(Filter(x => x.Email, email))
+                .Where(x => firstName != null && x.FirstName.ToLower().Contains(firstName.ToLower()) || firstName == null)
+                .Where(x => lastName != null && x.LastName.ToLower().Contains(lastName.ToLower()) || lastName == null)
+                .Where(x => email != null && x.Email.ToLower().Contains(email.ToLower()) || email == null)
                 .Skip(from ?? 0)
                 .Take(size ?? 10)
                 .OrderBy(x => x.Id)
@@ -69,12 +65,10 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task<AccountResponseContract> UpdateAccountAsync(
             int accountId,
-            AccountRequestContract contract)
+            AccountRequestContract contract,
+            int? userId)
         {
-            await EnsureAccountNotExists(contract);
-
-            var account = await _databaseContext.Accounts
-                .SingleOrDefaultAsync(x => x.Id == accountId);
+            var account = await EnsureAccountExists(accountId, userId);
 
             account.FirstName = contract.FirstName;
             account.LastName = contract.LastName;
@@ -88,10 +82,9 @@ namespace DripChipDbSystem.Services
         /// <summary>
         /// Удаление аккаунта пользователя
         /// </summary>
-        public async Task DeleteAccountAsync(int accountId)
+        public async Task DeleteAccountAsync(int accountId, int? userId)
         {
-            var account = await _databaseContext.Accounts
-                .SingleOrDefaultAsync(x => x.Id == accountId);
+            var account = await EnsureAccountExists(accountId, userId);
             _databaseContext.Remove(account);
             await _databaseContext.SaveChangesAsync();
         }
@@ -110,9 +103,17 @@ namespace DripChipDbSystem.Services
             }
         }
 
-        private static Expression<Func<Account, bool>> Filter(Func<Account, string> field, string filterString)
+        /// <summary>
+        /// Убедиться, что пользователь существует
+        /// </summary>
+        public async Task<Account> EnsureAccountExists(int id, int? userId)
         {
-            return account => filterString != null && field(account).ToLower().Contains(filterString.ToLower());
+            var account = await _databaseContext.Accounts
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            return account is not null && account.Id == userId.GetValueOrDefault()
+                ? account
+                : throw new Forbidden403Exception();
         }
     }
 }

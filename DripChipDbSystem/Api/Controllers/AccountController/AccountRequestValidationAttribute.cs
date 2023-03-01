@@ -14,7 +14,7 @@ namespace DripChipDbSystem.Api.Controllers.AccountController
         [GeneratedRegex(@"^\s*$")]
         private static partial Regex OnlySpaceSymbols();
 
-        [GeneratedRegex(@"^[\w\.]+@([\w]+\.[\w]{2,4}){1}$")]
+        [GeneratedRegex(@"^[\w\.\-]+@([\w]+\.[\w]{2,4}){1}$")]
         private static partial Regex Email();
 
         /// <inheritdoc/>

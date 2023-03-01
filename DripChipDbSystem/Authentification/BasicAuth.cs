@@ -9,5 +9,10 @@ namespace DripChipDbSystem.Authentification
         /// Схема аутентификации
         /// </summary>
         public const string Scheme = "Basic";
+
+        /// <summary>
+        /// Id авторизированного пользователя
+        /// </summary>
+        public const string Sid = "Sid";
     }
 }
