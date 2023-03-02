@@ -1,9 +1,6 @@
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Principal;
 using DripChipDbSystem.Authentification;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 
 namespace DripChipDbSystem.Utils
 {

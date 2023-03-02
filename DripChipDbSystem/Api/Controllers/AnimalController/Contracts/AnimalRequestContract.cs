@@ -1,6 +1,6 @@
-using System.Collections.Generic;
+using DripChipDbSystem.Api.Controllers.AnimalController.Attributes;
 
-namespace DripChipDbSystem.Api.Controllers.AnimalController
+namespace DripChipDbSystem.Api.Controllers.AnimalController.Contracts
 {
     /// <summary>
     /// Контракт запроса животного
@@ -8,11 +8,6 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
     [AnimalRequestValidation]
     public class AnimalRequestContract
     {
-        /// <summary>
-        /// Массив идентификаторов типов животного
-        /// </summary>
-        public IEnumerable<long?> AnimalTypes { get; set; }
-
         /// <summary>
         /// Масса животного, кг
         /// </summary>

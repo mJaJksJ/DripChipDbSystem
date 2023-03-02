@@ -4,7 +4,7 @@ using System.Linq;
 using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Utils;
 
-namespace DripChipDbSystem.Api.Controllers.AnimalController
+namespace DripChipDbSystem.Api.Controllers.AnimalController.Contracts
 {
     /// <summary>
     /// Ответ на запрос животного
@@ -84,11 +84,11 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
             Height = animal.Height;
             Gender = animal.Gender.GetMemberValue();
             LifeStatus = animal.LifeStatus.GetMemberValue();
-            ChippingDateTime = animal.ChippingDateTime.ToString("O");
+            ChippingDateTime = animal.ChippingDateTime.ToIsoString();
             ChipperId = animal.ChipperId;
             ChippingLocationId = animal.ChippingLocationPointId;
             VisitedLocations = animal.VisitedLocations?.Select(x => x.Id) ?? new long[] { 0 };
-            DeathDateTime = animal.DeathDateTime?.ToString("O");
+            DeathDateTime = animal.DeathDateTime?.ToIsoString();
         }
     }
 }

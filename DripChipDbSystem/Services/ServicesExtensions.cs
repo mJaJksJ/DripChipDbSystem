@@ -1,3 +1,4 @@
+using DripChipDbSystem.Services.AnimalType;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DripChipDbSystem.Services
@@ -12,6 +13,7 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public static IServiceCollection AddDripChipServices(this IServiceCollection services)
         {
+            services.AddScoped<AnimalTypeEnsureService>();
             services.AddScoped<AuthService>();
             services.AddScoped<AccountService>();
             services.AddScoped<LocationService>();

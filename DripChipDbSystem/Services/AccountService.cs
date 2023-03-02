@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Database;
+using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Database.Models.Auth;
 using DripChipDbSystem.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -84,6 +85,7 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task DeleteAccountAsync(int accountId, int? userId)
         {
+            await EnsureAccountHasNoAnimals(accountId);
             var account = await EnsureAccountExists(accountId, userId);
             _databaseContext.Remove(account);
             await _databaseContext.SaveChangesAsync();
@@ -114,6 +116,17 @@ namespace DripChipDbSystem.Services
             return account is not null && account.Id == userId.GetValueOrDefault()
                 ? account
                 : throw new Forbidden403Exception();
+        }
+
+        private async Task EnsureAccountHasNoAnimals(int accountId)
+        {
+            var animalsExist = await _databaseContext.Animals
+                .AnyAsync(x => x.ChipperId == accountId);
+
+            if (animalsExist)
+            {
+                throw new BadRequest400Exception();
+            }
         }
     }
 }

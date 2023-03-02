@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
 using DripChipDbSystem.Api.Common.ResponseTypes;
-using DripChipDbSystem.Api.Controllers.LocationController;
+using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
 using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -83,7 +83,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 404)]
         [ProducesResponseType(typeof(void), 409)]
-        public async Task<IActionResult> AddLocationAsync([FromBody] AnimalRequestContract contract)
+        public async Task<IActionResult> AddLocationAsync([FromBody] AddingAnimalRequestContract contract)
         {
             var response = await _animalService.AddAnimalAsync(contract);
             return new Created201Result(response);
@@ -99,7 +99,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         [ProducesResponseType(typeof(void), 404)]
         public async Task<IActionResult> UpdateAnimalAsync(
             [IdValidation] long animalId,
-            AnimalRequestContract contract)
+            [FromBody] UpdatingAnimalRequestContract contract)
         {
             var response = await _animalService.UpdateAnimalAsync(animalId, contract);
             return Ok(response);
@@ -139,7 +139,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         /// <summary>
         ///  Изменение типа животного у животного
         /// </summary>
-        [HttpPost("/animals/{animalId:long}/types")]
+        [HttpPut("/animals/{animalId:long}/types")]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 401)]
@@ -147,11 +147,12 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> UpdatenimalType(
             [IdValidation] long animalId,
-            TypeRequestContract contract)
+            [FromBody] TypeRequestContract contract)
         {
             var response = await _animalService.UpdateAnimalTypeAsync(animalId, contract);
             return Ok(response);
         }
+
 
         /// <summary>
         /// Удаление типа животного у животного

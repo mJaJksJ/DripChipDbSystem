@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using DripChipDbSystem.Authentification;
+using DripChipDbSystem.Api.Common.ResponseTypes;
+using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
 {
@@ -49,6 +51,23 @@ namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
                 from,
                 size);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Добавление точки локации, посещенной животным
+        /// </summary>
+        [HttpPost("/animals/{animalId:long}/locations/{pointId:long}")]
+        [ProducesResponseType(typeof(AnimalResponseContract), 201)]
+        [ProducesResponseType(typeof(void), 400)]
+        [ProducesResponseType(typeof(void), 401)]
+        [ProducesResponseType(typeof(void), 404)]
+        [ProducesResponseType(typeof(void), 409)]
+        public async Task<IActionResult> AddLocationAsync(
+            [IdValidation] long animalId,
+            [IdValidation] long pointId)
+        {
+            var response = await _animalService.AddAnimalVisitedLocationAsync(animalId, pointId);
+            return new Created201Result(response);
         }
 
         /// <summary>

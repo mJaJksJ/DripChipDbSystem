@@ -3,6 +3,7 @@ using System;
 using DripChipDbSystem.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DripChipDbSystem.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230302082218_FixDateTimeInVisitedLocation")]
+    partial class FixDateTimeInVisitedLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,23 +24,6 @@ namespace DripChipDbSystem.Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("AnimalAnimalType", b =>
-                {
-                    b.Property<long>("AnimalTypesId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("animal_types_id");
-
-                    b.Property<long>("RelatedAnimalsId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("related_animals_id");
-
-                    b.HasKey("AnimalTypesId", "RelatedAnimalsId");
-
-                    b.HasIndex("RelatedAnimalsId");
-
-                    b.ToTable("AnimalAnimalType");
-                });
 
             modelBuilder.Entity("DripChipDbSystem.Database.Models.Animals.Animal", b =>
                 {
@@ -104,12 +90,18 @@ namespace DripChipDbSystem.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<long?>("AnimalId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("animal_id");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("type");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AnimalId");
 
                     b.ToTable("animal_type", (string)null);
                 });
@@ -205,21 +197,6 @@ namespace DripChipDbSystem.Database.Migrations
                     b.ToTable("account", (string)null);
                 });
 
-            modelBuilder.Entity("AnimalAnimalType", b =>
-                {
-                    b.HasOne("DripChipDbSystem.Database.Models.Animals.AnimalType", null)
-                        .WithMany()
-                        .HasForeignKey("AnimalTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DripChipDbSystem.Database.Models.Animals.Animal", null)
-                        .WithMany()
-                        .HasForeignKey("RelatedAnimalsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DripChipDbSystem.Database.Models.Animals.Animal", b =>
                 {
                     b.HasOne("DripChipDbSystem.Database.Models.Auth.Account", "Chipper")
@@ -237,6 +214,13 @@ namespace DripChipDbSystem.Database.Migrations
                     b.Navigation("Chipper");
 
                     b.Navigation("ChippingLocationPoint");
+                });
+
+            modelBuilder.Entity("DripChipDbSystem.Database.Models.Animals.AnimalType", b =>
+                {
+                    b.HasOne("DripChipDbSystem.Database.Models.Animals.Animal", null)
+                        .WithMany("AnimalTypes")
+                        .HasForeignKey("AnimalId");
                 });
 
             modelBuilder.Entity("DripChipDbSystem.Database.Models.Animals.AnimalVisitedLocation", b =>
@@ -260,6 +244,8 @@ namespace DripChipDbSystem.Database.Migrations
 
             modelBuilder.Entity("DripChipDbSystem.Database.Models.Animals.Animal", b =>
                 {
+                    b.Navigation("AnimalTypes");
+
                     b.Navigation("VisitedLocations");
                 });
 #pragma warning restore 612, 618

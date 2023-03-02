@@ -7,7 +7,7 @@ namespace DripChipDbSystem.Api.Common.Attributes
     /// <summary>
     /// Аттрибут валидации параметра From
     /// </summary>
-    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Parameter)]
     public class IdValidationAttribute : ValidationAttribute
     {
         /// <inheritdoc/>

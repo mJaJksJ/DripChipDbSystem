@@ -22,7 +22,7 @@ namespace DripChipDbSystem.Database
             {
                 if (item.Entity.LifeStatus == LifeStatus.Dead)
                 {
-                    item.CurrentValues[nameof(Animal.DeathDateTime)] = DateTime.Now;
+                    item.CurrentValues[nameof(Animal.DeathDateTime)] = DateTimeOffset.Now;
                 }
             }
 

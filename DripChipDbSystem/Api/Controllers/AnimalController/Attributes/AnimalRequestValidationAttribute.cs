@@ -4,12 +4,14 @@ using System;
 using System.Linq;
 using DripChipDbSystem.Database.Enums;
 using DripChipDbSystem.Utils;
+using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
 
-namespace DripChipDbSystem.Api.Controllers.AnimalController
+namespace DripChipDbSystem.Api.Controllers.AnimalController.Attributes
 {
     /// <summary>
     /// Аттрибут валидации <see cref="AnimalRequestContract"/>
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
     public class AnimalRequestValidationAttribute : ValidationAttribute
     {
         /// <inheritdoc/>
@@ -18,16 +20,6 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
             if (value is not AnimalRequestContract contract)
             {
                 throw new InvalidCastException();
-            }
-
-            if (contract.AnimalTypes is null || !contract.AnimalTypes.Any())
-            {
-                throw new BadRequest400Exception();
-            }
-
-            if (contract.AnimalTypes.Any(x => x is null or <= 0))
-            {
-                throw new BadRequest400Exception();
             }
 
             if (contract.Weight is null or <= 0)

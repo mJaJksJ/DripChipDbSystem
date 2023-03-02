@@ -73,7 +73,7 @@ namespace DripChipDbSystem.Services
             var animalVisitedLocation = await _databaseContext.AnimalVisitedLocations
                 .SingleOrDefaultAsync(x => x.AnimalId == animalId && x.Id == contract.VisitedLocationPointId);
 
-            animalVisitedLocation.LocationPointId = contract.LocationPointId;
+            animalVisitedLocation.LocationPointId = contract.LocationPointId.GetValueOrDefault();
 
             await _databaseContext.SaveChangesAsync();
             return new AnimalVisitedLocationResponseContract(animalVisitedLocation);

@@ -92,7 +92,8 @@ namespace DripChipDbSystem.Database.Models.Animals
                 .HasDefaultValue(LifeStatus.Alive);
             builder.Property(x => x.DeathDateTime)
                 .HasDefaultValue(null);
-
+            builder.HasMany(x => x.AnimalTypes)
+                .WithMany(x => x.RelatedAnimals);
         }
     }
 }

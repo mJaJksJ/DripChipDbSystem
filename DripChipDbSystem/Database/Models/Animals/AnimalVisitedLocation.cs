@@ -33,7 +33,7 @@ namespace DripChipDbSystem.Database.Models.Animals
         /// <summary>
         /// Дата и время посещения
         /// </summary>
-        public DateTime VisitedDateTime { get; set; }
+        public DateTimeOffset VisitedDateTime { get; set; }
 
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<AnimalVisitedLocation> builder)

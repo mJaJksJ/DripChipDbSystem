@@ -1,20 +1,21 @@
-using DripChipDbSystem.Api.Common.Attributes;
+using DripChipDbSystem.Api.Controllers.AnimalController.Attributes;
 
-namespace DripChipDbSystem.Api.Controllers.AnimalController
+namespace DripChipDbSystem.Api.Controllers.AnimalController.Contracts
 {
     /// <summary>
     /// Контракт запроса типа животного
     /// </summary>
+    [TypeRequestValidation]
     public class TypeRequestContract
     {
         /// <summary>
         /// Идентификатор текущего типа животного
         /// </summary>
-        [IdValidation] public long OldTypeId { get; set; }
+        public long? OldTypeId { get; set; }
 
         /// <summary>
         /// Идентификатор нового типа животного для замены
         /// </summary>
-        [IdValidation] public long NewTypeId { get; set; }
+        public long? NewTypeId { get; set; }
     }
 }

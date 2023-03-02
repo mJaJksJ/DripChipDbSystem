@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.LocationController;
 using DripChipDbSystem.Database;
@@ -75,6 +76,8 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task DeleteLocationAsync(long pointId)
         {
+            await EnsureLocationNotChippingPoint(pointId);
+            await EnsureLocationNotVisited(pointId);
             var location = await EnsureLocationExists(pointId);
             _databaseContext.Remove(location);
             await _databaseContext.SaveChangesAsync();
@@ -99,6 +102,28 @@ namespace DripChipDbSystem.Services
                 .SingleOrDefaultAsync(x => x.Id == pointId);
 
             return location ?? throw new NotFound404Exception();
+        }
+
+        private async Task EnsureLocationNotChippingPoint(long pointId)
+        {
+            var isChippingPoint = await _databaseContext.Animals
+                .AnyAsync(x => x.ChippingLocationPointId == pointId);
+
+            if (isChippingPoint)
+            {
+                throw new BadRequest400Exception();
+            }
+        }
+        private async Task EnsureLocationNotVisited(long pointId)
+        {
+            var isChippingPoint = await _databaseContext.Animals
+                .AnyAsync(x => x.VisitedLocations
+                    .Any(vl => vl.LocationPointId == pointId));
+
+            if (isChippingPoint)
+            {
+                throw new BadRequest400Exception();
+            }
         }
     }
 }

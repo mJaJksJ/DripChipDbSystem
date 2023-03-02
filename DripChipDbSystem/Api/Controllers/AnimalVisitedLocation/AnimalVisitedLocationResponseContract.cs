@@ -1,4 +1,4 @@
-using System;
+using DripChipDbSystem.Utils;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
 {
@@ -15,7 +15,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
         /// <summary>
         /// Дата и время посещения животным точки локации
         /// </summary>
-        public DateTime DateTimeOfVisitLocationPoint { get; set; }
+        public string DateTimeOfVisitLocationPoint { get; set; }
 
         /// <summary>
         /// Идентификатор посещенной точки локации
@@ -29,7 +29,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
         {
             Id = animalVisitedLocation.Id;
             LocationPointId = animalVisitedLocation.LocationPointId;
-            DateTimeOfVisitLocationPoint = animalVisitedLocation.VisitedDateTime;
+            DateTimeOfVisitLocationPoint = animalVisitedLocation.VisitedDateTime.ToIsoString();
         }
     }
 }

@@ -1,10 +1,10 @@
-using DripChipDbSystem.Services;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
 using DripChipDbSystem.Api.Common.ResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using DripChipDbSystem.Authentification;
+using DripChipDbSystem.Services.AnimalType;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
 {
@@ -66,7 +66,6 @@ namespace DripChipDbSystem.Api.Controllers.AnimalTypeController
             [IdValidation] long typeId,
             [FromBody] AnimalTypeRequestContract contract)
         {
-            await _animalTypeService.EnsureAnimalTypeNotExists(contract);
             var response = await _animalTypeService.UpdateAnimalTypeAsync(typeId, contract);
             return Ok(response);
         }
