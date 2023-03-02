@@ -56,8 +56,7 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task<AnimalTypeResponseContract> UpdateAnimalTypeAsync(long typeId, AnimalTypeRequestContract contract)
         {
-            var animalType = await _databaseContext.AnimalTypes
-                .SingleOrDefaultAsync(x => x.Id == typeId);
+            var animalType = await EnsureAnimalTypeExists(typeId);
 
             animalType.Type = contract.Type;
 
@@ -70,8 +69,7 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task DeleteAnimalTypeAsync(long typeId)
         {
-            var animalType = await _databaseContext.AnimalTypes
-                .SingleOrDefaultAsync(x => x.Id == typeId);
+            var animalType = await EnsureAnimalTypeExists(typeId);
 
             _databaseContext.Remove(animalType);
             await _databaseContext.SaveChangesAsync();
@@ -89,6 +87,17 @@ namespace DripChipDbSystem.Services
             {
                 throw new Conflict409Exception();
             }
+        }
+
+        /// <summary>
+        /// Убедиться, что тип животного существует
+        /// </summary>
+        public async Task<AnimalType> EnsureAnimalTypeExists(long id)
+        {
+            var animalType = await _databaseContext.AnimalTypes
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            return animalType ?? throw new NotFound404Exception();
         }
     }
 }
