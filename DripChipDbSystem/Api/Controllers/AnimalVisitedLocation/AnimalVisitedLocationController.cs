@@ -80,7 +80,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
         [ProducesResponseType(typeof(void), 404)]
         public async Task<IActionResult> UpdateAnimalVisitedLocationAsync(
             [IdValidation] long animalId,
-            AnimalVisitedLocationRequestContract contract)
+            [FromBody] AnimalVisitedLocationRequestContract contract)
         {
             var response = await _animalService.UpdateAnimalVisitedLocationAsync(animalId, contract);
             return Ok(response);

@@ -5,7 +5,7 @@ using DripChipDbSystem.Api.Common.Attributes;
 using DripChipDbSystem.Api.Common.ResponseTypes;
 using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
 using DripChipDbSystem.Authentification;
-using DripChipDbSystem.Services;
+using DripChipDbSystem.Services.Animal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
