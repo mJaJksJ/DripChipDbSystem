@@ -17,7 +17,7 @@ namespace DripChipDbSystem.Services.Location
         {
             _databaseContext = databaseContext;
         }
-        
+
         public async Task EnsureLocationNotExists(LocationRequestContract contract)
         {
             const float epsilon = 0.000001f;

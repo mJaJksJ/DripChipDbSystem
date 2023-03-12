@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Auth;
+using DripChipDbSystem.Services.Account;
 
 namespace DripChipDbSystem.Services
 {
@@ -30,7 +31,7 @@ namespace DripChipDbSystem.Services
         {
             await _accountService.EnsureAccountNotExists(contract);
 
-            var newAccount = new Account
+            var newAccount = new Database.Models.Auth.Account
             {
                 FirstName = contract.FirstName,
                 LastName = contract.LastName,

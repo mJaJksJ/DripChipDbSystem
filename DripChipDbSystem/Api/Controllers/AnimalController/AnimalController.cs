@@ -52,10 +52,10 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
         [ProducesResponseType(typeof(void), 401)]
         [ProducesResponseType(typeof(void), 409)]
         public async Task<IActionResult> SearchAsync(
-            [FromQuery] DateTime startDateTime,
-            [FromQuery] DateTime endDateTime,
-            [FromQuery] int chipperId,
-            [FromQuery] long chippingLocationId,
+            [FromQuery] DateTimeOffset? startDateTime,
+            [FromQuery] DateTimeOffset? endDateTime,
+            [FromQuery] int? chipperId,
+            [FromQuery] long? chippingLocationId,
             [FromQuery] string lifeStatus,
             [FromQuery] string gender,
             [FromQuery][FromValidation] int? from,
@@ -69,8 +69,8 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController
                 chippingLocationId,
                 lifeStatus,
                 gender,
-                from ?? 0,
-                size ?? 10);
+                from,
+                size);
             return Ok(response);
         }
 

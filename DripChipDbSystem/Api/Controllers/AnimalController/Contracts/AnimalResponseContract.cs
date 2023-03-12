@@ -78,7 +78,7 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController.Contracts
         public AnimalResponseContract(Animal animal)
         {
             Id = animal.Id;
-            AnimalTypes = animal.AnimalTypes?.Select(x => x.Id) ?? new long[] { 0 };
+            AnimalTypes = animal.AnimalTypes?.Any() ?? false ? animal.AnimalTypes?.Select(x => x.Id) : new long[] { 0 };
             Weight = animal.Weight;
             Length = animal.Length;
             Height = animal.Height;
@@ -87,7 +87,10 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController.Contracts
             ChippingDateTime = animal.ChippingDateTime.ToIsoString();
             ChipperId = animal.ChipperId;
             ChippingLocationId = animal.ChippingLocationPointId;
-            VisitedLocations = animal.VisitedLocations?.Select(x => x.Id) ?? new long[] { 0 };
+            VisitedLocations = 
+                (animal.VisitedLocations?.Any() ?? false
+                    ? animal.VisitedLocations?.Select(x => x.Id)
+                    : Array.Empty<long>());
             DeathDateTime = animal.DeathDateTime?.ToIsoString();
         }
     }

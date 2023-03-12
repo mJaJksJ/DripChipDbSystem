@@ -38,8 +38,8 @@ namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
         [ProducesResponseType(typeof(void), 404)]
         public async Task<IActionResult> SearchAsync(
             [IdValidation] long animalId,
-            [FromQuery] DateTime startDateTime,
-            [FromQuery] DateTime endDateTime,
+            [FromQuery] DateTimeOffset? startDateTime,
+            [FromQuery] DateTimeOffset? endDateTime,
             [FromQuery][FromValidation] int? from,
             [FromQuery][SizeValidation] int? size
             )

@@ -1,3 +1,4 @@
+using DripChipDbSystem.Services.Account;
 using DripChipDbSystem.Services.Animal;
 using DripChipDbSystem.Services.AnimalType;
 using DripChipDbSystem.Services.Location;
@@ -18,6 +19,8 @@ namespace DripChipDbSystem.Services
             services.AddScoped<AnimalTypeEnsureService>();
             services.AddScoped<LocationEnsureService>();
             services.AddScoped<AnimalEnsureService>();
+            services.AddScoped<LocationEnsureService>();
+            services.AddScoped<AccountEnsureService>();
             services.AddScoped<AuthService>();
             services.AddScoped<AccountService>();
             services.AddScoped<LocationService>();

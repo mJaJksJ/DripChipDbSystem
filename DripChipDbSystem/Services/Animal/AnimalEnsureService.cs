@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Enums;
+using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,26 +47,20 @@ namespace DripChipDbSystem.Services.Animal
             }
         }
 
-        public async Task EnsureChiperExistsAsync(int? chipperId)
+        public async Task<Database.Models.Auth.Account> EnsureChiperExistsAsync(int? chipperId)
         {
             var chipper = await _databaseContext.Accounts
                 .SingleOrDefaultAsync(x => x.Id == chipperId);
 
-            if (chipper is null)
-            {
-                throw new NotFound404Exception();
-            }
+            return chipper ?? throw new NotFound404Exception();
         }
 
-        public async Task EnsureChippingLocationExistsAsync(long? locationId)
+        public async Task<LocationPoint> EnsureChippingLocationExistsAsync(long? locationId)
         {
             var location = await _databaseContext.LocationPoints
                 .SingleOrDefaultAsync(x => x.Id == locationId);
 
-            if (location is null)
-            {
-                throw new NotFound404Exception();
-            }
+            return location ?? throw new NotFound404Exception();
         }
 
         public void EnsureAnimalTypesNotRepeated(AddingAnimalRequestContract contract)
@@ -78,7 +73,7 @@ namespace DripChipDbSystem.Services.Animal
             }
         }
 
-        public void EnsureAnimalLiveChippingLocationButHasOther(Database.Models.Animals.Animal animal)
+        public void EnsureAnimalLeftChippingLocationButHasOther(Database.Models.Animals.Animal animal)
         {
             if (animal.VisitedLocations.Any() &&
                 animal.VisitedLocations.Last().Id != animal.ChippingLocationPointId)

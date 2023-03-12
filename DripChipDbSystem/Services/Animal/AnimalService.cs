@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
@@ -8,7 +7,9 @@ using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Enums;
 using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Exceptions;
+using DripChipDbSystem.Services.Account;
 using DripChipDbSystem.Services.AnimalType;
+using DripChipDbSystem.Services.Location;
 using DripChipDbSystem.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,8 @@ namespace DripChipDbSystem.Services.Animal
         private readonly DatabaseContext _databaseContext;
         private readonly AnimalTypeEnsureService _animalTypeEnsureService;
         private readonly AnimalEnsureService _animalEnsureService;
+        private readonly AccountEnsureService _accountEnsureService;
+        private readonly LocationEnsureService _locationEnsureService;
 
         /// <summary>
         /// .ctor
@@ -29,11 +32,15 @@ namespace DripChipDbSystem.Services.Animal
         public AnimalService(
             DatabaseContext databaseContext,
             AnimalTypeEnsureService animalTypeEnsureService,
-            AnimalEnsureService animalEnsureService)
+            AnimalEnsureService animalEnsureService,
+            AccountEnsureService accountEnsureService,
+            LocationEnsureService locationEnsureService)
         {
             _databaseContext = databaseContext;
             _animalTypeEnsureService = animalTypeEnsureService;
             _animalEnsureService = animalEnsureService;
+            _accountEnsureService = accountEnsureService;
+            _locationEnsureService = locationEnsureService;
         }
 
         /// <summary>
@@ -42,6 +49,8 @@ namespace DripChipDbSystem.Services.Animal
         public async Task<AnimalResponseContract> GetAnimalAsync(long animalId)
         {
             var animal = await _databaseContext.Animals
+                .Include(x => x.AnimalTypes)
+                .Include(x => x.VisitedLocations)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == animalId);
 
@@ -54,30 +63,32 @@ namespace DripChipDbSystem.Services.Animal
         /// Поиск животных по параметрам
         /// </summary>
         public async Task<IEnumerable<AnimalResponseContract>> SearchAsync(
-            DateTime startDateTime,
-            DateTime endDateTime,
-            int chipperId,
-            long chippingLocationId,
+            DateTimeOffset? startDateTime,
+            DateTimeOffset? endDateTime,
+            int? chipperId,
+            long? chippingLocationId,
             string lifeStatus,
             string gender,
-            int from,
-            int size)
+            int? from,
+            int? size)
         {
-            return (await _databaseContext.Animals
+            var animals = await _databaseContext.Animals
                 .AsNoTracking()
+                .Include(x => x.AnimalTypes)
+                .Include(x => x.VisitedLocations)
                 .Where(x =>
-                    x.ChippingDateTime >= startDateTime &&
-                    x.ChippingDateTime <= endDateTime &&
-                    x.ChipperId == chipperId &&
-                    x.ChippingLocationPointId == chippingLocationId &&
-                    x.LifeStatus == lifeStatus.GetEnumValueByMemberValue<LifeStatus>() &&
-                    x.Gender == gender.GetEnumValueByMemberValue<Gender>()
+                    (startDateTime == null || x.ChippingDateTime >= startDateTime) &&
+                    (endDateTime == null || x.ChippingDateTime <= endDateTime) &&
+                    (chipperId == null || x.ChipperId == chipperId) &&
+                    (chippingLocationId == null || x.ChippingLocationPointId == chippingLocationId) &&
+                    (string.IsNullOrEmpty(lifeStatus) || x.LifeStatus == lifeStatus.GetEnumValueByMemberValue<LifeStatus>()) &&
+                    (string.IsNullOrEmpty(gender) || x.Gender == gender.GetEnumValueByMemberValue<Gender>())
                 )
-                .Skip(from)
-                .Take(size)
                 .OrderBy(x => x.Id)
-                .ToListAsync())
-                .Select(x => new AnimalResponseContract(x));
+                .Skip(from ?? 0)
+                .Take(size ?? 10)
+                .ToListAsync();
+            return animals.Select(x => new AnimalResponseContract(x));
         }
 
         /// <summary>
@@ -86,8 +97,8 @@ namespace DripChipDbSystem.Services.Animal
         public async Task<AnimalResponseContract> AddAnimalAsync(AddingAnimalRequestContract contract)
         {
             await _animalEnsureService.EnsureAnimalTypesExistAsync(contract.AnimalTypes);
-            await _animalEnsureService.EnsureChiperExistsAsync(contract.ChipperId);
-            await _animalEnsureService.EnsureChippingLocationExistsAsync(contract.ChippingLocationId);
+            var chipper = await _animalEnsureService.EnsureChiperExistsAsync(contract.ChipperId);
+            var chippingLocation = await _locationEnsureService.EnsureLocationExists(contract.ChippingLocationId.GetValueOrDefault());
 
             _animalEnsureService.EnsureAnimalTypesNotRepeated(contract);
             var animalTypes = await _databaseContext.AnimalTypes
@@ -101,8 +112,8 @@ namespace DripChipDbSystem.Services.Animal
                 Length = contract.Length.GetValueOrDefault(),
                 Height = contract.Height.GetValueOrDefault(),
                 Gender = contract.Gender.GetEnumValueByMemberValue<Gender>(),
-                ChipperId = contract.ChipperId.GetValueOrDefault(),
-                ChippingLocationPointId = contract.ChippingLocationId.GetValueOrDefault(),
+                Chipper = chipper,
+                ChippingLocationPoint = chippingLocation,
             };
 
             await _databaseContext.AddAsync(newAnimal);
@@ -119,13 +130,20 @@ namespace DripChipDbSystem.Services.Animal
             UpdatingAnimalRequestContract contract)
         {
             var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
+            var chipper = await _accountEnsureService.EnsureAccountExists(contract.ChipperId.GetValueOrDefault());
+            var location = await _locationEnsureService.EnsureLocationExists(contract.ChippingLocationId.GetValueOrDefault());
+
+            if (location.Id == animal.VisitedLocations.FirstOrDefault()?.LocationPointId)
+            {
+                throw new BadRequest400Exception();
+            }
 
             animal.Weight = contract.Weight.GetValueOrDefault();
             animal.Length = contract.Length.GetValueOrDefault();
             animal.Height = contract.Height.GetValueOrDefault();
             animal.Gender = contract.Gender.GetEnumValueByMemberValue<Gender>();
-            animal.ChipperId = contract.ChipperId.GetValueOrDefault();
-            animal.ChippingLocationPointId = contract.ChippingLocationId.GetValueOrDefault();
+            animal.Chipper = chipper;
+            animal.ChippingLocationPoint = location;
             animal.LifeStatus = contract.LifeStatus.GetEnumValueByMemberValue<LifeStatus>();
 
             await _databaseContext.SaveChangesAsync();
@@ -138,7 +156,7 @@ namespace DripChipDbSystem.Services.Animal
         public async Task DeleteAnimalAsync(long animalId)
         {
             var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
-            _animalEnsureService.EnsureAnimalLiveChippingLocationButHasOther(animal);
+            _animalEnsureService.EnsureAnimalLeftChippingLocationButHasOther(animal);
             _databaseContext.Remove(animal);
             await _databaseContext.SaveChangesAsync();
         }
