@@ -7,18 +7,27 @@ using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace DripChipDbSystem.Services.Location
+namespace DripChipDbSystem.Services.LocationService
 {
+    /// <summary>
+    /// Сервис проверок
+    /// </summary>
     public class LocationEnsureService
     {
         private readonly DatabaseContext _databaseContext;
 
+        /// <summary>
+        /// .ctor
+        /// </summary>
         public LocationEnsureService(DatabaseContext databaseContext)
         {
             _databaseContext = databaseContext;
         }
 
-        public async Task EnsureLocationNotExists(LocationRequestContract contract)
+        /// <summary>
+        /// Убедиться, что локации не существует
+        /// </summary>
+        public async Task EnsureLocationNotExistsAsync(LocationRequestContract contract)
         {
             const float epsilon = 0.000001f;
             var isExists = await _databaseContext.LocationPoints
@@ -31,7 +40,10 @@ namespace DripChipDbSystem.Services.Location
             }
         }
 
-        public async Task<LocationPoint> EnsureLocationExists(long pointId)
+        /// <summary>
+        /// Убедиться, что локация существует
+        /// </summary>
+        public async Task<LocationPoint> EnsureLocationExistsAsync(long pointId)
         {
             var location = await _databaseContext.LocationPoints
                 .SingleOrDefaultAsync(x => x.Id == pointId);
@@ -39,7 +51,10 @@ namespace DripChipDbSystem.Services.Location
             return location ?? throw new NotFound404Exception();
         }
 
-        public async Task EnsureLocationNotChippingPoint(long pointId)
+        /// <summary>
+        /// Убедиться, что в локации никто не чипировался
+        /// </summary>
+        public async Task EnsureLocationNotChippingPointAsync(long pointId)
         {
             var isChippingPoint = await _databaseContext.Animals
                 .AnyAsync(x => x.ChippingLocationPointId == pointId);
@@ -49,7 +64,11 @@ namespace DripChipDbSystem.Services.Location
                 throw new BadRequest400Exception();
             }
         }
-        public async Task EnsureLocationNotVisited(long pointId)
+
+        /// <summary>
+        /// Убедиться, что локацию никто не посещал
+        /// </summary>
+        public async Task EnsureLocationNotVisitedAsync(long pointId)
         {
             var isChippingPoint = await _databaseContext.Animals
                 .AnyAsync(x => x.VisitedLocations

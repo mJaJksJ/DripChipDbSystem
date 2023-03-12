@@ -1,5 +1,4 @@
 using DripChipDbSystem.Api.Common.Attributes;
-using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Api.Common.ResponseTypes;
 using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
+using DripChipDbSystem.Services.AnimalVisitedLocationService;
 
 namespace DripChipDbSystem.Api.Controllers.AnimalVisitedLocation
 {

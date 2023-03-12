@@ -3,7 +3,7 @@ using System;
 namespace DripChipDbSystem.Exceptions
 {
     /// <inheritdoc/>
-    public abstract class DripChipDbSystemException : Exception
+    public class DripChipDbSystemException : Exception
     {
         /// <summary>
         /// Сообщение ошибки (рус)
@@ -13,7 +13,7 @@ namespace DripChipDbSystem.Exceptions
         /// <summary>
         /// .ctor
         /// </summary>
-        protected DripChipDbSystemException(string russianMessage = null) : base()
+        public DripChipDbSystemException(string russianMessage = null)
         {
             RussianMessage = russianMessage;
         }

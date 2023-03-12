@@ -56,7 +56,6 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController.Contracts
         /// </summary>
         public int ChipperId { get; set; }
 
-
         /// <summary>
         /// Идентификатор точки локации животных
         /// </summary>
@@ -87,10 +86,9 @@ namespace DripChipDbSystem.Api.Controllers.AnimalController.Contracts
             ChippingDateTime = animal.ChippingDateTime.ToIsoString();
             ChipperId = animal.ChipperId;
             ChippingLocationId = animal.ChippingLocationPointId;
-            VisitedLocations = 
-                (animal.VisitedLocations?.Any() ?? false
-                    ? animal.VisitedLocations?.Select(x => x.Id)
-                    : Array.Empty<long>());
+            VisitedLocations = animal.VisitedLocations?.Any() ?? false
+                ? animal.VisitedLocations?.Select(x => x.Id)
+                : Array.Empty<long>();
             DeathDateTime = animal.DeathDateTime?.ToIsoString();
         }
     }

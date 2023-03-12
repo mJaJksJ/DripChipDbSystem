@@ -1,12 +1,17 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AnimalTypeController;
 using DripChipDbSystem.Database;
+using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace DripChipDbSystem.Services.AnimalType
+namespace DripChipDbSystem.Services.AnimalTypeService
 {
+    /// <summary>
+    /// Сервис проверок
+    /// </summary>
     public class AnimalTypeEnsureService
     {
         private readonly DatabaseContext _databaseContext;
@@ -22,7 +27,7 @@ namespace DripChipDbSystem.Services.AnimalType
         /// <summary>
         /// Убедиться, что типа животного не существует
         /// </summary>
-        public async Task EnsureAnimalTypeNotExists(AnimalTypeRequestContract contract)
+        public async Task EnsureAnimalTypeNotExistsAsync(AnimalTypeRequestContract contract)
         {
             var isExists = await _databaseContext.AnimalTypes
                 .AnyAsync(x => x.Type == contract.Type);
@@ -36,7 +41,7 @@ namespace DripChipDbSystem.Services.AnimalType
         /// <summary>
         /// Убедиться, что тип животного существует
         /// </summary>
-        public async Task<Database.Models.Animals.AnimalType> EnsureAnimalTypeExists(long id)
+        public async Task<AnimalType> EnsureAnimalTypeExistsAsync(long id)
         {
             var animalType = await _databaseContext.AnimalTypes
                 .SingleOrDefaultAsync(x => x.Id == id);
@@ -44,7 +49,28 @@ namespace DripChipDbSystem.Services.AnimalType
             return animalType ?? throw new NotFound404Exception();
         }
 
-        public async Task EnsureTypeHasNoAnimals(long typeId)
+
+        /// <summary>
+        /// Убедиться, что типы животного существуют
+        /// </summary>
+        public async Task EnsureAnimalTypesExistAsync(IEnumerable<long?> animalTypeIds)
+        {
+            var animalTypes = await _databaseContext.AnimalTypes
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            var allExists = animalTypeIds.All(x => x.HasValue && animalTypes.Contains(x.Value));
+
+            if (!allExists)
+            {
+                throw new NotFound404Exception();
+            }
+        }
+
+        /// <summary>
+        /// Убедиться, что тип не связан с животными
+        /// </summary>
+        public async Task EnsureTypeHasNoAnimalsAsync(long typeId)
         {
             var hasAnimals = await _databaseContext.Animals
                 .AnyAsync(x => x.AnimalTypes

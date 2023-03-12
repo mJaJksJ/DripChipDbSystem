@@ -1,7 +1,6 @@
 using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
 using System;
 using System.Linq;
-using System.Text.Json.Nodes;
 using DripChipDbSystem.Database.Enums;
 using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Utils;

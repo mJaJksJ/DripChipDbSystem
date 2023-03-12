@@ -1,14 +1,11 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.LocationController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Exceptions;
-using DripChipDbSystem.Services.Location;
 using Microsoft.EntityFrameworkCore;
 
-namespace DripChipDbSystem.Services
+namespace DripChipDbSystem.Services.LocationService
 {
     /// <summary>
     /// Сервис работы с точками локации
@@ -48,7 +45,7 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task<LocationResponseContract> AddLocationAsync(LocationRequestContract contract)
         {
-            await _locationEnsureService.EnsureLocationNotExists(contract);
+            await _locationEnsureService.EnsureLocationNotExistsAsync(contract);
             var newLocation = new LocationPoint
             {
                 Latitude = contract.Latitude.GetValueOrDefault(),
@@ -66,8 +63,8 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task<LocationResponseContract> UpdateLocationAsync(long pointId, LocationRequestContract contract)
         {
-            await _locationEnsureService.EnsureLocationNotExists(contract);
-            var location = await _locationEnsureService.EnsureLocationExists(pointId);
+            await _locationEnsureService.EnsureLocationNotExistsAsync(contract);
+            var location = await _locationEnsureService.EnsureLocationExistsAsync(pointId);
 
             location.Latitude = contract.Latitude.GetValueOrDefault();
             location.Longitude = contract.Longitude.GetValueOrDefault();
@@ -81,9 +78,9 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task DeleteLocationAsync(long pointId)
         {
-            await _locationEnsureService.EnsureLocationNotChippingPoint(pointId);
-            await _locationEnsureService.EnsureLocationNotVisited(pointId);
-            var location = await _locationEnsureService.EnsureLocationExists(pointId);
+            await _locationEnsureService.EnsureLocationNotChippingPointAsync(pointId);
+            await _locationEnsureService.EnsureLocationNotVisitedAsync(pointId);
+            var location = await _locationEnsureService.EnsureLocationExistsAsync(pointId);
             _databaseContext.Remove(location);
             await _databaseContext.SaveChangesAsync();
         }

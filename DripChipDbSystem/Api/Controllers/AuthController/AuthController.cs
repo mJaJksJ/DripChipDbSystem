@@ -3,7 +3,6 @@ using DripChipDbSystem.Api.Common.ResponseTypes;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 

@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AccountController;
 using DripChipDbSystem.Database;
-using DripChipDbSystem.Database.Models.Auth;
-using DripChipDbSystem.Services.Account;
+using DripChipDbSystem.Services.AccountService;
 
 namespace DripChipDbSystem.Services
 {
@@ -12,16 +11,16 @@ namespace DripChipDbSystem.Services
     public class AuthService
     {
         private readonly DatabaseContext _databaseContext;
-        private readonly AccountService _accountService;
+        private readonly AccountEnsureService _accountEnsureService;
 
         /// <summary>
         /// .ctor
         /// </summary>
         public AuthService(DatabaseContext databaseContext,
-            AccountService accountService)
+            AccountEnsureService accountEnsureService)
         {
             _databaseContext = databaseContext;
-            _accountService = accountService;
+            _accountEnsureService = accountEnsureService;
         }
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task<AccountResponseContract> AddAccountAsync(AccountRequestContract contract)
         {
-            await _accountService.EnsureAccountNotExists(contract);
+            await _accountEnsureService.EnsureAccountNotExistsAsync(contract);
 
             var newAccount = new Database.Models.Auth.Account
             {

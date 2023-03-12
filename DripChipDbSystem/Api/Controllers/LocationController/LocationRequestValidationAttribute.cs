@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using DripChipDbSystem.Exceptions;
-using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 
 namespace DripChipDbSystem.Api.Controllers.LocationController
 {

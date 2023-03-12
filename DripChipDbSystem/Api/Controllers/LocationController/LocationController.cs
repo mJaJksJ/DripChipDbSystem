@@ -2,8 +2,7 @@ using System.Threading.Tasks;
 using DripChipDbSystem.Api.Common.Attributes;
 using DripChipDbSystem.Api.Common.ResponseTypes;
 using DripChipDbSystem.Authentification;
-using DripChipDbSystem.Services;
-using DripChipDbSystem.Services.Location;
+using DripChipDbSystem.Services.LocationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

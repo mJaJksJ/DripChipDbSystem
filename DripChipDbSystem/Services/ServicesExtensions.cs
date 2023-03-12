@@ -1,7 +1,8 @@
-using DripChipDbSystem.Services.Account;
-using DripChipDbSystem.Services.Animal;
-using DripChipDbSystem.Services.AnimalType;
-using DripChipDbSystem.Services.Location;
+using DripChipDbSystem.Services.AccountService;
+using DripChipDbSystem.Services.AnimalService;
+using DripChipDbSystem.Services.AnimalTypeService;
+using DripChipDbSystem.Services.AnimalVisitedLocationService;
+using DripChipDbSystem.Services.LocationService;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DripChipDbSystem.Services
@@ -21,12 +22,13 @@ namespace DripChipDbSystem.Services
             services.AddScoped<AnimalEnsureService>();
             services.AddScoped<LocationEnsureService>();
             services.AddScoped<AccountEnsureService>();
+            services.AddScoped<AnimalVisitedLocationEnsureService>();
             services.AddScoped<AuthService>();
-            services.AddScoped<AccountService>();
-            services.AddScoped<LocationService>();
-            services.AddScoped<AnimalTypeService>();
-            services.AddScoped<AnimalService>();
-            services.AddScoped<AnimalVisitedLocationService>();
+            services.AddScoped<AccountService.AccountService>();
+            services.AddScoped<LocationService.LocationService>();
+            services.AddScoped<AnimalTypeService.AnimalTypeService>();
+            services.AddScoped<AnimalService.AnimalService>();
+            services.AddScoped<AnimalVisitedLocationService.AnimalVisitedLocationService>();
             return services;
         }
     }

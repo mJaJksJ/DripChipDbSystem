@@ -4,7 +4,7 @@ using DripChipDbSystem.Database;
 using DripChipDbSystem.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace DripChipDbSystem.Services.AnimalType
+namespace DripChipDbSystem.Services.AnimalTypeService
 {
     /// <summary>
     /// Сервис работы типами животных
@@ -44,7 +44,7 @@ namespace DripChipDbSystem.Services.AnimalType
         /// </summary>
         public async Task<AnimalTypeResponseContract> AddAnimalTypeAsync(AnimalTypeRequestContract contract)
         {
-            await _animalTypeEnsureService.EnsureAnimalTypeNotExists(contract);
+            await _animalTypeEnsureService.EnsureAnimalTypeNotExistsAsync(contract);
             var newAnimalType = new Database.Models.Animals.AnimalType
             {
                 Type = contract.Type,
@@ -59,8 +59,8 @@ namespace DripChipDbSystem.Services.AnimalType
         /// </summary>
         public async Task<AnimalTypeResponseContract> UpdateAnimalTypeAsync(long typeId, AnimalTypeRequestContract contract)
         {
-            await _animalTypeEnsureService.EnsureAnimalTypeNotExists(contract);
-            var animalType = await _animalTypeEnsureService.EnsureAnimalTypeExists(typeId);
+            await _animalTypeEnsureService.EnsureAnimalTypeNotExistsAsync(contract);
+            var animalType = await _animalTypeEnsureService.EnsureAnimalTypeExistsAsync(typeId);
 
             animalType.Type = contract.Type;
 
@@ -73,8 +73,8 @@ namespace DripChipDbSystem.Services.AnimalType
         /// </summary>
         public async Task DeleteAnimalTypeAsync(long typeId)
         {
-            await _animalTypeEnsureService.EnsureTypeHasNoAnimals(typeId);
-            var animalType = await _animalTypeEnsureService.EnsureAnimalTypeExists(typeId);
+            await _animalTypeEnsureService.EnsureTypeHasNoAnimalsAsync(typeId);
+            var animalType = await _animalTypeEnsureService.EnsureAnimalTypeExistsAsync(typeId);
 
             _databaseContext.Remove(animalType);
             await _databaseContext.SaveChangesAsync();

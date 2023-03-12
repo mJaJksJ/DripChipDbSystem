@@ -14,7 +14,7 @@ namespace DripChipDbSystem.Utils
         /// </summary>
         public static int? GetUserId(this ClaimsPrincipal user)
         {
-            var id = user.Claims.SingleOrDefault(_ => _.Type == BasicAuth.Sid)?.Value;
+            var id = user.Claims.SingleOrDefault(x => x.Type == BasicAuth.Sid)?.Value;
             return id is null ? null : int.Parse(id);
         }
     }

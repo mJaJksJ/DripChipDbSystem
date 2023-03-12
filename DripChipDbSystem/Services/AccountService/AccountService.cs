@@ -6,7 +6,7 @@ using DripChipDbSystem.Database;
 using DripChipDbSystem.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace DripChipDbSystem.Services.Account
+namespace DripChipDbSystem.Services.AccountService
 {
     /// <summary>
     /// Сервис работы с аккаунтамип
@@ -51,16 +51,23 @@ namespace DripChipDbSystem.Services.Account
             int? from,
             int? size)
         {
-            return (await _databaseContext.Accounts
+            var accounts = await _databaseContext.Accounts
                 .AsNoTracking()
-                .Where(x => firstName != null && x.FirstName.ToLower().Contains(firstName.ToLower()) || firstName == null)
-                .Where(x => lastName != null && x.LastName.ToLower().Contains(lastName.ToLower()) || lastName == null)
-                .Where(x => email != null && x.Email.ToLower().Contains(email.ToLower()) || email == null)
+                .Where(x =>
+                    firstName != null &&
+                    x.FirstName.ToLower().Contains(firstName.ToLower()) || firstName == null)
+                .Where(x =>
+                    lastName != null &&
+                    x.LastName.ToLower().Contains(lastName.ToLower()) || lastName == null)
+                .Where(x =>
+                    email != null &&
+                    x.Email.ToLower().Contains(email.ToLower()) || email == null)
                 .OrderBy(x => x.Id)
                 .Skip(from ?? 0)
                 .Take(size ?? 10)
-                .ToListAsync())
-                .Select(x => new AccountResponseContract(x));
+                .ToListAsync();
+
+            return accounts.Select(x => new AccountResponseContract(x));
         }
 
         /// <summary>
@@ -71,7 +78,7 @@ namespace DripChipDbSystem.Services.Account
             AccountRequestContract contract,
             int? userId)
         {
-            var account = await _accountEnsureService.EnsureAccountExists(accountId, userId);
+            var account = await _accountEnsureService.EnsureAccountExistsAsync(accountId, userId);
 
             account.FirstName = contract.FirstName;
             account.LastName = contract.LastName;
@@ -87,24 +94,10 @@ namespace DripChipDbSystem.Services.Account
         /// </summary>
         public async Task DeleteAccountAsync(int accountId, int? userId)
         {
-            await _accountEnsureService.EnsureAccountHasNoAnimals(accountId);
-            var account = await _accountEnsureService.EnsureAccountExists(accountId, userId);
+            await _accountEnsureService.EnsureAccountHasNoAnimalsAsync(accountId);
+            var account = await _accountEnsureService.EnsureAccountExistsAsync(accountId, userId);
             _databaseContext.Remove(account);
             await _databaseContext.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// Убедиться, что пользователя не существует
-        /// </summary>
-        public async Task EnsureAccountNotExists(AccountRequestContract contract)
-        {
-            var isExists = await _databaseContext.Accounts
-                .AnyAsync(x => x.Email == contract.Email);
-
-            if (isExists)
-            {
-                throw new Conflict409Exception();
-            }
         }
     }
 }

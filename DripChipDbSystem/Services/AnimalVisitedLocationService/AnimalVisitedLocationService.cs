@@ -6,11 +6,11 @@ using DripChipDbSystem.Api.Controllers.AnimalVisitedLocation;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Exceptions;
-using DripChipDbSystem.Services.Animal;
-using DripChipDbSystem.Services.Location;
+using DripChipDbSystem.Services.AnimalService;
+using DripChipDbSystem.Services.LocationService;
 using Microsoft.EntityFrameworkCore;
 
-namespace DripChipDbSystem.Services
+namespace DripChipDbSystem.Services.AnimalVisitedLocationService
 {
     /// <summary>
     /// Сервис работы с точками локации, которые посетило животное
@@ -20,6 +20,7 @@ namespace DripChipDbSystem.Services
         private readonly DatabaseContext _databaseContext;
         private readonly LocationEnsureService _locationEnsureService;
         private readonly AnimalEnsureService _animalEnsureService;
+        private readonly AnimalVisitedLocationEnsureService _animalVisitedLocationEnsureService;
 
         /// <summary>
         /// .ctor
@@ -27,11 +28,13 @@ namespace DripChipDbSystem.Services
         public AnimalVisitedLocationService(
             DatabaseContext databaseContext,
             LocationEnsureService locationEnsureService,
-            AnimalEnsureService animalEnsureService)
+            AnimalEnsureService animalEnsureService,
+            AnimalVisitedLocationEnsureService animalVisitedLocationEnsureService)
         {
             _databaseContext = databaseContext;
             _locationEnsureService = locationEnsureService;
             _animalEnsureService = animalEnsureService;
+            _animalVisitedLocationEnsureService = animalVisitedLocationEnsureService;
         }
 
         /// <summary>
@@ -63,12 +66,12 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task<AnimalVisitedLocationResponseContract> AddAnimalVisitedLocationAsync(long animalId, long pointId)
         {
-            var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
             _animalEnsureService.EnsureAnimalNotDead(animal);
-            var location = await _locationEnsureService.EnsureLocationExists(pointId);
+            var location = await _locationEnsureService.EnsureLocationExistsAsync(pointId);
 
             if (animal.VisitedLocations.LastOrDefault()?.LocationPointId == location.Id ||
-                (!animal.VisitedLocations.Any() && animal.ChippingLocationPointId == location.Id))
+                !animal.VisitedLocations.Any() && animal.ChippingLocationPointId == location.Id)
             {
                 throw new BadRequest400Exception();
             }
@@ -89,9 +92,9 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task<AnimalVisitedLocationResponseContract> UpdateAnimalVisitedLocationAsync(long animalId, AnimalVisitedLocationRequestContract contract)
         {
-            var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
-            var animalVisitedLocation = await EnsureAnimalVisitedLocationExists(animalId, contract.VisitedLocationPointId.GetValueOrDefault());
-            var location = await _locationEnsureService.EnsureLocationExists(contract.LocationPointId.GetValueOrDefault());
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
+            var animalVisitedLocation = await _animalVisitedLocationEnsureService.EnsureAnimalVisitedLocationExistsAsync(animalId, contract.VisitedLocationPointId.GetValueOrDefault());
+            var location = await _locationEnsureService.EnsureLocationExistsAsync(contract.LocationPointId.GetValueOrDefault());
 
             var firstPoint = animal.VisitedLocations.FirstOrDefault();
             if (animal.ChippingLocationPointId == location.Id && firstPoint?.Id == animalVisitedLocation.Id)
@@ -123,8 +126,8 @@ namespace DripChipDbSystem.Services
         /// </summary>
         public async Task DeleteAnimalVisitedLocationAsync(long animalId, long visitedPointId)
         {
-            var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
-            var location = await EnsureAnimalVisitedLocationExists(animal, visitedPointId);
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
+            var location = _animalVisitedLocationEnsureService.EnsureAnimalVisitedLocationExists(animal, visitedPointId);
 
             if (animal.VisitedLocations.Count >= 2)
             {
@@ -137,20 +140,6 @@ namespace DripChipDbSystem.Services
             }
             animal.VisitedLocations.Remove(location);
             await _databaseContext.SaveChangesAsync();
-        }
-
-        public async Task<AnimalVisitedLocation> EnsureAnimalVisitedLocationExists(long animalId, long animalVisitedLocationId)
-        {
-            var animalVisitedLocation = await _databaseContext.AnimalVisitedLocations
-                .SingleOrDefaultAsync(x => x.AnimalId == animalId && x.Id == animalVisitedLocationId);
-            return animalVisitedLocation ?? throw new NotFound404Exception();
-        }
-
-        public async Task<AnimalVisitedLocation> EnsureAnimalVisitedLocationExists(Database.Models.Animals.Animal animal, long animalVisitedLocationId)
-        {
-            var animalVisitedLocation = animal.VisitedLocations
-                .SingleOrDefault(x => x.Id == animalVisitedLocationId);
-            return animalVisitedLocation ?? throw new NotFound404Exception();
         }
     }
 }

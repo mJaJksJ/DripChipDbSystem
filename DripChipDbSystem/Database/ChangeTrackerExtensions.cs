@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using DripChipDbSystem.Database.Enums;
 using DripChipDbSystem.Database.Models.Animals;
+using DripChipDbSystem.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -31,7 +32,7 @@ namespace DripChipDbSystem.Database
                 .Where(e => e.State == EntityState.Added)
                 .Any(item => item.Entity.LifeStatus == LifeStatus.Dead))
             {
-                throw new Exception("Нельзя добавить мертвое животное");
+                throw new DripChipDbSystemException("Нельзя добавить мертвое животное");
             }
         }
     }

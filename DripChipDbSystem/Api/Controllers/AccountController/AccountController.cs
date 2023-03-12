@@ -5,7 +5,7 @@ using DripChipDbSystem.Api.Common.Attributes;
 using DripChipDbSystem.Authentification;
 using DripChipDbSystem.Utils;
 using Microsoft.AspNetCore.Authorization;
-using DripChipDbSystem.Services.Account;
+using DripChipDbSystem.Services.AccountService;
 
 namespace DripChipDbSystem.Api.Controllers.AccountController
 {

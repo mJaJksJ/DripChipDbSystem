@@ -5,15 +5,14 @@ using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Enums;
-using DripChipDbSystem.Database.Models.Animals;
 using DripChipDbSystem.Exceptions;
-using DripChipDbSystem.Services.Account;
-using DripChipDbSystem.Services.AnimalType;
-using DripChipDbSystem.Services.Location;
+using DripChipDbSystem.Services.AccountService;
+using DripChipDbSystem.Services.AnimalTypeService;
+using DripChipDbSystem.Services.LocationService;
 using DripChipDbSystem.Utils;
 using Microsoft.EntityFrameworkCore;
 
-namespace DripChipDbSystem.Services.Animal
+namespace DripChipDbSystem.Services.AnimalService
 {
     /// <summary>
     /// Сервис работы с животными
@@ -49,9 +48,9 @@ namespace DripChipDbSystem.Services.Animal
         public async Task<AnimalResponseContract> GetAnimalAsync(long animalId)
         {
             var animal = await _databaseContext.Animals
+                .AsNoTracking()
                 .Include(x => x.AnimalTypes)
                 .Include(x => x.VisitedLocations)
-                .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == animalId);
 
             return animal is null
@@ -96,11 +95,11 @@ namespace DripChipDbSystem.Services.Animal
         /// </summary>
         public async Task<AnimalResponseContract> AddAnimalAsync(AddingAnimalRequestContract contract)
         {
-            await _animalEnsureService.EnsureAnimalTypesExistAsync(contract.AnimalTypes);
-            var chipper = await _animalEnsureService.EnsureChiperExistsAsync(contract.ChipperId);
-            var chippingLocation = await _locationEnsureService.EnsureLocationExists(contract.ChippingLocationId.GetValueOrDefault());
-
+            await _animalTypeEnsureService.EnsureAnimalTypesExistAsync(contract.AnimalTypes);
+            var chipper = await _accountEnsureService.EnsureAccountExistsAsync(contract.ChipperId.GetValueOrDefault());
+            var chippingLocation = await _locationEnsureService.EnsureLocationExistsAsync(contract.ChippingLocationId.GetValueOrDefault());
             _animalEnsureService.EnsureAnimalTypesNotRepeated(contract);
+
             var animalTypes = await _databaseContext.AnimalTypes
                 .Where(x => contract.AnimalTypes.Contains(x.Id))
                 .ToListAsync();
@@ -129,9 +128,9 @@ namespace DripChipDbSystem.Services.Animal
             long animalId,
             UpdatingAnimalRequestContract contract)
         {
-            var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
-            var chipper = await _accountEnsureService.EnsureAccountExists(contract.ChipperId.GetValueOrDefault());
-            var location = await _locationEnsureService.EnsureLocationExists(contract.ChippingLocationId.GetValueOrDefault());
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
+            var chipper = await _accountEnsureService.EnsureAccountExistsAsync(contract.ChipperId.GetValueOrDefault());
+            var location = await _locationEnsureService.EnsureLocationExistsAsync(contract.ChippingLocationId.GetValueOrDefault());
 
             if (location.Id == animal.VisitedLocations.FirstOrDefault()?.LocationPointId)
             {
@@ -155,7 +154,7 @@ namespace DripChipDbSystem.Services.Animal
         /// </summary>
         public async Task DeleteAnimalAsync(long animalId)
         {
-            var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
             _animalEnsureService.EnsureAnimalLeftChippingLocationButHasOther(animal);
             _databaseContext.Remove(animal);
             await _databaseContext.SaveChangesAsync();
@@ -166,8 +165,8 @@ namespace DripChipDbSystem.Services.Animal
         /// </summary>
         public async Task<AnimalResponseContract> AddAnimalTypeAsync(long animalId, long typeId)
         {
-            var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
-            var type = await _animalTypeEnsureService.EnsureAnimalTypeExists(typeId);
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
+            var type = await _animalTypeEnsureService.EnsureAnimalTypeExistsAsync(typeId);
 
             animal.AnimalTypes.Add(type);
             await _databaseContext.SaveChangesAsync();
@@ -181,11 +180,11 @@ namespace DripChipDbSystem.Services.Animal
             long animalId,
             TypeRequestContract contract)
         {
-            var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
-            _ = await _animalTypeEnsureService.EnsureAnimalTypeExists(contract.OldTypeId.GetValueOrDefault());
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
+            _ = await _animalTypeEnsureService.EnsureAnimalTypeExistsAsync(contract.OldTypeId.GetValueOrDefault());
             var type = _animalEnsureService.EnsureAnimalHasType(contract.OldTypeId.GetValueOrDefault(), animal);
             _animalEnsureService.EnsureAnimalHasNotType(contract.NewTypeId.GetValueOrDefault(), animal);
-            var newType = await _animalTypeEnsureService.EnsureAnimalTypeExists(contract.NewTypeId.GetValueOrDefault());
+            var newType = await _animalTypeEnsureService.EnsureAnimalTypeExistsAsync(contract.NewTypeId.GetValueOrDefault());
 
             animal.AnimalTypes.Remove(type);
             animal.AnimalTypes.Add(newType);
@@ -199,9 +198,10 @@ namespace DripChipDbSystem.Services.Animal
         /// </summary>
         public async Task<AnimalResponseContract> DeleteAnimalTypeAsync(long animalId, long typeId)
         {
-            var animal = await _animalEnsureService.EnsureAnimalExists(animalId);
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
             var type = _animalEnsureService.EnsureAnimalHasType(typeId, animal);
             _animalEnsureService.EnsureNotLastType(animal);
+
             animal.AnimalTypes.Remove(type);
             await _databaseContext.SaveChangesAsync();
             return new AnimalResponseContract(animal);
