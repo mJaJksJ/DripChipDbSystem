@@ -5,8 +5,8 @@ using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Startup.Startup;
+using Startup.SwaggerSettings;
 
 namespace DripChipDbSystem
 {
@@ -17,39 +17,27 @@ namespace DripChipDbSystem
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            builder.Services.AdddDatabaseService<DatabaseContext>(builder.Configuration);
-
-            builder.Services.AddDripChipServices();
 
             builder.Services.AddAuthentication(options => options.DefaultScheme = BasicAuth.Scheme)
                 .AddScheme<BasicAuthSchemeOptions, BasicAuthHandler>(BasicAuth.Scheme, _ => { });
+            builder.Services.AdddDatabaseService<DatabaseContext>(builder.Configuration);
+            builder.Services.AddSwaggerService();
+
+            builder.Services.AddDripChipServices();
 
             var app = builder.Build();
 
             app.UseBasicLogOutMiddlewareExtensions();
             app.UseHttpResponseMiddleware();
             app.UseDatabase<DatabaseContext>();
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+
+            app.UseSwaggerMiddleware();
 
             app.UseHttpsRedirection();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
-
-
             app.MapControllers();
 
             app.Run();
