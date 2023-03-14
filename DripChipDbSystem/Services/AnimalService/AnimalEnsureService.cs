@@ -105,5 +105,16 @@ namespace DripChipDbSystem.Services.AnimalService
                 throw new BadRequest400Exception();
             }
         }
+
+        /// <summary>
+        /// Изменяемая точка локации животного не первая
+        /// </summary>
+        public void EnsureChangingNotFirstLocation(Animal animal, LocationPoint location)
+        {
+            if (location.Id == animal.VisitedLocations.FirstOrDefault()?.LocationPointId)
+            {
+                throw new BadRequest400Exception();
+            }
+        }
     }
 }

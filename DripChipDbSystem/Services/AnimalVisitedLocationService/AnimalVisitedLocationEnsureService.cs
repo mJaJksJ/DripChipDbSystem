@@ -41,5 +41,65 @@ namespace DripChipDbSystem.Services.AnimalVisitedLocationService
                 .SingleOrDefault(x => x.Id == animalVisitedLocationId);
             return animalVisitedLocation ?? throw new NotFound404Exception();
         }
+
+        /// <summary>
+        /// Первая точка не является точкой чипизации
+        /// </summary>
+        public void EnsureFirstNotChipping(
+            Animal animal,
+            LocationPoint location,
+            AnimalVisitedLocation animalVisitedLocation)
+        {
+            var firstPoint = animal.VisitedLocations.FirstOrDefault();
+            if (animal.ChippingLocationPointId == location.Id && firstPoint?.Id == animalVisitedLocation.Id)
+            {
+                throw new BadRequest400Exception();
+            }
+        }
+
+        /// <summary>
+        /// Последняя точка, но не единственная
+        /// </summary>
+        public void EnsureLastNotOne(
+            Animal animal,
+            AnimalVisitedLocation animalVisitedLocation)
+        {
+            var lastPoint = animal.VisitedLocations.LastOrDefault();
+            if (animal.VisitedLocations.Count != 1 && lastPoint?.Id == animalVisitedLocation.Id)
+            {
+                throw new BadRequest400Exception();
+            }
+        }
+
+        /// <summary>
+        /// Изменение не на предидущую, не на следующую, если они не равны
+        /// </summary>
+        public void EnsurePrevNextLocations(
+            Animal animal,
+            LocationPoint location,
+            AnimalVisitedLocation animalVisitedLocation)
+        {
+            var locationIndex = animal.VisitedLocations.IndexOf(animalVisitedLocation);
+            var prev = animal.VisitedLocations.ElementAtOrDefault(locationIndex - 1);
+            var next = animal.VisitedLocations.ElementAtOrDefault(locationIndex + 1);
+            if ((prev?.LocationPointId == location.Id || next?.LocationPointId == location.Id) && prev?.LocationPointId != next?.LocationPointId)
+            {
+                throw new BadRequest400Exception();
+            }
+        }
+
+        /// <summary>
+        /// Последняя точка не точка чиирования, если есть другие
+        /// </summary>
+        public void EnsureLastNotChippingWithAny(
+            Animal animal,
+            LocationPoint location)
+        {
+            if (animal.VisitedLocations.LastOrDefault()?.LocationPointId == location.Id ||
+                !animal.VisitedLocations.Any() && animal.ChippingLocationPointId == location.Id)
+            {
+                throw new BadRequest400Exception();
+            }
+        }
     }
 }

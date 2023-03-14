@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AnimalTypeController;
 using DripChipDbSystem.Database;
-using DripChipDbSystem.Exceptions;
-using Microsoft.EntityFrameworkCore;
 
 namespace DripChipDbSystem.Services.AnimalTypeService
 {
@@ -30,13 +28,8 @@ namespace DripChipDbSystem.Services.AnimalTypeService
         /// </summary>
         public async Task<AnimalTypeResponseContract> GetAnimalTypeAsync(long typeId)
         {
-            var animalType = await _databaseContext.AnimalTypes
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == typeId);
-
-            return animalType is null
-                ? throw new NotFound404Exception()
-                : new AnimalTypeResponseContract(animalType);
+            var animalType = await _animalTypeEnsureService.EnsureAnimalTypeExistsAsync(typeId);
+            return new AnimalTypeResponseContract(animalType);
         }
 
         /// <summary>

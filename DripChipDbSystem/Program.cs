@@ -5,7 +5,7 @@ using DripChipDbSystem.Middlewares.HttpResponseMiddleware;
 using DripChipDbSystem.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Startup.Startup;
+using Startup.DatabaseSettings;
 using Startup.SwaggerSettings;
 
 namespace DripChipDbSystem

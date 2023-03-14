@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Startup.Configuration;
 
-namespace Startup.Startup
+namespace Startup.DatabaseSettings
 {
     public static class DatabaseSettings
     {

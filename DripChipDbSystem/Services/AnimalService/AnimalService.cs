@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AnimalController.Contracts;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Enums;
-using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Services.AccountService;
 using DripChipDbSystem.Services.AnimalTypeService;
 using DripChipDbSystem.Services.LocationService;
@@ -47,15 +46,9 @@ namespace DripChipDbSystem.Services.AnimalService
         /// </summary>
         public async Task<AnimalResponseContract> GetAnimalAsync(long animalId)
         {
-            var animal = await _databaseContext.Animals
-                .AsNoTracking()
-                .Include(x => x.AnimalTypes)
-                .Include(x => x.VisitedLocations)
-                .SingleOrDefaultAsync(x => x.Id == animalId);
+            var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
 
-            return animal is null
-                ? throw new NotFound404Exception()
-                : new AnimalResponseContract(animal);
+            return new AnimalResponseContract(animal);
         }
 
         /// <summary>
@@ -131,11 +124,7 @@ namespace DripChipDbSystem.Services.AnimalService
             var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
             var chipper = await _accountEnsureService.EnsureAccountExistsAsync(contract.ChipperId.GetValueOrDefault());
             var location = await _locationEnsureService.EnsureLocationExistsAsync(contract.ChippingLocationId.GetValueOrDefault());
-
-            if (location.Id == animal.VisitedLocations.FirstOrDefault()?.LocationPointId)
-            {
-                throw new BadRequest400Exception();
-            }
+            _animalEnsureService.EnsureChangingNotFirstLocation(animal, location);
 
             animal.Weight = contract.Weight.GetValueOrDefault();
             animal.Length = contract.Length.GetValueOrDefault();

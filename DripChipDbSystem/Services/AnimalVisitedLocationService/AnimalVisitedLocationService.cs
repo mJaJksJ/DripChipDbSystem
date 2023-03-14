@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.AnimalVisitedLocation;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Animals;
-using DripChipDbSystem.Exceptions;
 using DripChipDbSystem.Services.AnimalService;
 using DripChipDbSystem.Services.LocationService;
 using Microsoft.EntityFrameworkCore;
@@ -69,12 +68,7 @@ namespace DripChipDbSystem.Services.AnimalVisitedLocationService
             var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
             _animalEnsureService.EnsureAnimalNotDead(animal);
             var location = await _locationEnsureService.EnsureLocationExistsAsync(pointId);
-
-            if (animal.VisitedLocations.LastOrDefault()?.LocationPointId == location.Id ||
-                !animal.VisitedLocations.Any() && animal.ChippingLocationPointId == location.Id)
-            {
-                throw new BadRequest400Exception();
-            }
+            _animalVisitedLocationEnsureService.EnsureLastNotChippingWithAny(animal, location);
 
             var newAnimalVisitedLocation = await _databaseContext.AddAsync(new AnimalVisitedLocation
             {
@@ -95,26 +89,9 @@ namespace DripChipDbSystem.Services.AnimalVisitedLocationService
             var animal = await _animalEnsureService.EnsureAnimalExistsAsync(animalId);
             var animalVisitedLocation = await _animalVisitedLocationEnsureService.EnsureAnimalVisitedLocationExistsAsync(animalId, contract.VisitedLocationPointId.GetValueOrDefault());
             var location = await _locationEnsureService.EnsureLocationExistsAsync(contract.LocationPointId.GetValueOrDefault());
-
-            var firstPoint = animal.VisitedLocations.FirstOrDefault();
-            if (animal.ChippingLocationPointId == location.Id && firstPoint?.Id == animalVisitedLocation.Id)
-            {
-                throw new BadRequest400Exception();
-            }
-
-            var lastPoint = animal.VisitedLocations.LastOrDefault();
-            if (animal.VisitedLocations.Count != 1 && lastPoint?.Id == animalVisitedLocation.Id)
-            {
-                throw new BadRequest400Exception();
-            }
-
-            var locationIndex = animal.VisitedLocations.IndexOf(animalVisitedLocation);
-            var prev = animal.VisitedLocations.ElementAtOrDefault(locationIndex - 1);
-            var next = animal.VisitedLocations.ElementAtOrDefault(locationIndex + 1);
-            if ((prev?.LocationPointId == location.Id || next?.LocationPointId == location.Id) && prev?.LocationPointId != next?.LocationPointId)
-            {
-                throw new BadRequest400Exception();
-            }
+            _animalVisitedLocationEnsureService.EnsureFirstNotChipping(animal, location, animalVisitedLocation);
+            _animalVisitedLocationEnsureService.EnsureLastNotOne(animal, animalVisitedLocation);
+            _animalVisitedLocationEnsureService.EnsurePrevNextLocations(animal, location, animalVisitedLocation);
 
             animalVisitedLocation.LocationPoint = location;
             await _databaseContext.SaveChangesAsync();

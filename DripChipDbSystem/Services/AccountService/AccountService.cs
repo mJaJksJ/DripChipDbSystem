@@ -32,13 +32,8 @@ namespace DripChipDbSystem.Services.AccountService
         /// </summary>
         public async Task<AccountResponseContract> GetAccountAsync(int accountId)
         {
-            var account = await _databaseContext.Accounts
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == accountId);
-
-            return account is null
-                ? throw new NotFound404Exception()
-                : new AccountResponseContract(account);
+            var account = await _accountEnsureService.EnsureAccountExistsAsync(accountId);
+            return new AccountResponseContract(account);
         }
 
         /// <summary>

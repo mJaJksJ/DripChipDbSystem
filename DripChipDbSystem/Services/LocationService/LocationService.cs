@@ -2,8 +2,6 @@ using System.Threading.Tasks;
 using DripChipDbSystem.Api.Controllers.LocationController;
 using DripChipDbSystem.Database;
 using DripChipDbSystem.Database.Models.Animals;
-using DripChipDbSystem.Exceptions;
-using Microsoft.EntityFrameworkCore;
 
 namespace DripChipDbSystem.Services.LocationService
 {
@@ -31,13 +29,8 @@ namespace DripChipDbSystem.Services.LocationService
         /// </summary>
         public async Task<LocationResponseContract> GetLocationAsync(long pointId)
         {
-            var location = await _databaseContext.LocationPoints
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == pointId);
-
-            return location is null
-                ? throw new NotFound404Exception()
-                : new LocationResponseContract(location);
+            var location = await _locationEnsureService.EnsureLocationExistsAsync(pointId);
+            return new LocationResponseContract(location);
         }
 
         /// <summary>
